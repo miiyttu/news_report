@@ -1,0 +1,59 @@
+{% extends 'news_collector/base.html' %}
+{% load static %}
+
+{% block title %}最新ニュース一覧{% endblock %}
+
+{% block content %}
+<!-- カテゴリタブ -->
+<ul class="nav nav-tabs mb-4">
+  <li class="nav-item">
+    <a
+      class="nav-link {% if not current_category %}active{% endif %}"
+      href="{% url 'news_collector:index' %}"
+      >すべて</a
+    >
+  </li>
+  {% for value, label in category_choices %}
+  <li class="nav-item">
+    <a
+      class="nav-link {% if current_category == value %}active{% endif %}"
+      href="?cat={{ value }}"
+      >{{ label }}</a
+    >
+  </li>
+  {% endfor %}
+</ul>
+<h1 class="mb-4">最新ニュース</h1>
+
+<div class="row row-cols-1 row-cols-md-2 g-4">
+  {% for record in articles %}
+  <div class="col">
+    <div class="card h-100">
+      <span class="badge bg-primary position-absolute top-0 end-0 m-2">
+        {{ record.get_category_display }}
+      </span>
+
+      <div class="card-body">
+        <h5 class="card-title">{{ record.title_jp }}</h5>
+        <p class="card-text">{{ record.summary|truncatechars:100 }}</p>
+      </div>
+
+      <div
+        class="card-footer d-flex justify-content-between align-items-center"
+      >
+        <small class="text-muted">{{ record.source_name }}</small>
+        <a
+          href="{% url 'news_collector:article_detail' record.pk %}"
+          class="btn btn-sm btn-outline-primary"
+          >詳細を見る</a
+        >
+      </div>
+    </div>
+  </div>
+  {% endfor %}
+</div>
+
+<footer class="mt-5 text-center text-muted">
+  <p>&copy; {{ current_year }} ニュースレポートアプリ</p>
+</footer>
+{% endblock %}
