@@ -121,6 +121,7 @@ USE_TZ = True
 
 STATIC_URL = "static/"
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
+STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 # settings.py に追加
 LOGIN_REDIRECT_URL = 'news_collector:index'  # ログイン後のリダイレクト先
