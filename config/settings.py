@@ -1,5 +1,6 @@
 from pathlib import Path
 import os 
+import dj_database_url
 from dotenv import load_dotenv
 
 # .envファイルを読み込む
@@ -37,6 +38,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
@@ -78,6 +80,9 @@ DATABASES = {
         'PORT': os.getenv("DB_PORT"),
     }
 }
+
+db_from_env = dj_database_url.config(conn_max_age=600)
+DATABASES['default'].update(db_from_env)
 
 
 # Password validation
