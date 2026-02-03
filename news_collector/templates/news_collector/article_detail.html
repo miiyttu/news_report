@@ -1,34 +1,43 @@
 {% extends 'news_collector/base.html' %}
 {% load static %}
-
 {% block content %}
 <div class="container mt-4">
   <div class="article-header mb-4">
-    <h1 class="article-title mb-3">{{ article.title_jp|striptags }}</h1>
+    <h1 class="article-title mb-3">{{ record.title_jp|striptags }}</h1>
     <div class="article-meta d-flex gap-3 mb-3">
-        <span><i class="far fa-calendar-alt me-2"></i>{{ article.published_at|date:"Y年m月d日 H:i" }}</span>
-        <span><i class="fas fa-newspaper me-2"></i>{{ article.source_name }}</span>
+      <span
+        ><i class="far fa-calendar-alt me-2"></i>
+        {{record.published_at|date:"Y年m月d日 H:i" }}
+      </span>
+      <span><i class="fas fa-newspaper me-2"></i>{{ record.source_name }}</span>
     </div>
   </div>
 
   <div class="card mb-4">
     <div class="card-body">
-      <p class="text-muted">
-        Googleニュースの規約およびサイトの互換性により、現在こちらでは記事の冒頭のみを表示しています。
+      <p class="text-muted mb-0">
+        <i class="fas fa-info-circle me-2"></i>
+        この記事は外部サイトのコンテンツです。著作権保護のため、全文はリンク先の公式サイトにてご確認ください。
       </p>
-      <hr>
-      <p>{{ article.summary }}</p>
     </div>
   </div>
 
   <div class="text-center mb-5">
-    <a href="{{ article.url }}" target="_blank" rel="noopener noreferrer" class="btn btn-primary btn-lg">
-      この記事の続きを公式サイトで読む <i class="fas fa-external-link-alt ms-2"></i>
+    <a
+      href="{{ record.url }}"
+      target="_blank"
+      rel="noopener noreferrer"
+      class="btn btn-primary btn-lg"
+    >
+      この記事の続きを公式サイトで読む
+      <i class="fas fa-external-link-alt ms-2"></i>
     </a>
   </div>
 
   <div class="text-center">
-    <a href="{% url 'news_collector:index' %}" class="btn btn-outline-secondary">一覧に戻る</a>
+    <a href="{% url 'news_collector:index' %}" class="btn btn-outline-secondary"
+      >一覧に戻る</a
+    >
   </div>
 </div>
 {% endblock %}

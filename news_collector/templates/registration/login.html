@@ -1,0 +1,24 @@
+{% extends 'news_collector/base.html' %}
+{% block content %}
+<div class="container my-5">
+  <h2>ログイン</h2>
+  <div class="text-center">
+    {% if form.errors %}
+    <div class="alert alert-danger">
+      ユーザー名またはパスワードが正しくありません。
+    </div>
+    {% endif %}
+    <form method="post">
+      {% csrf_token %}
+      <input type="hidden" name="next" value="{{ request.GET.next }}">
+      <div class="mb-3">
+        {{ form.username.label_tag }} {{ form.username }}
+      </div>
+      <div class="mb-3">
+        {{ form.password.label_tag }} {{ form.password }}
+      </div>
+      <button type="submit" class="btn btn-primary">ログイン</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,10 @@
+{% extends 'news_collector/base.html' %}
+{% block content %}
+<div class="container my-5">
+  <h2>ログアウト</h2>
+  <div class="text-center">
+    <p>ログアウトしました。</p>
+    <a href="{% url 'login' %}" class="btn btn-primary">ログインする</a>
+  </div>
+</div>
+{% endblock %}

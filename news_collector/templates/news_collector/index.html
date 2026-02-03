@@ -1,59 +1,159 @@
 {% extends 'news_collector/base.html' %}
 {% load static %}
-
 {% block title %}最新ニュース一覧{% endblock %}
-
 {% block content %}
-<!-- カテゴリタブ -->
-<ul class="nav nav-tabs mb-4">
-  <li class="nav-item">
-    <a
-      class="nav-link {% if not current_category %}active{% endif %}"
-      href="{% url 'news_collector:index' %}"
-      >すべて</a
-    >
-  </li>
-  {% for value, label in category_choices %}
-  <li class="nav-item">
-    <a
-      class="nav-link {% if current_category == value %}active{% endif %}"
-      href="?cat={{ value }}"
-      >{{ label }}</a
-    >
-  </li>
-  {% endfor %}
-</ul>
 <h1 class="mb-4">最新ニュース</h1>
 
-<div class="row row-cols-1 row-cols-md-2 g-4">
-  {% for record in articles %}
-  <div class="col">
-    <div class="card h-100">
-      <span class="badge bg-primary position-absolute top-0 end-0 m-2">
-        {{ record.get_category_display }}
-      </span>
+<div class="text-end mb-3">
+    <a href="?reloaded=true" class="btn btn-sm btn-outline-primary">
+        <i class="fas fa-sync-alt me-1"></i>ニュースを更新
+    </a>
+</div>
 
-      <div class="card-body">
-        <h5 class="card-title">{{ record.title_jp }}</h5>
-        <p class="card-text">{{ record.summary|truncatechars:100 }}</p>
-      </div>
+<ul class="nav nav-pills mb-4" id="mainTab" role="tablist">
+  <li class="nav-item">
+    <button
+      class="nav-link active"
+      id="general-tab"
+      data-bs-toggle="pill"
+      data-bs-target="#general-content"
+      type="button"
+    >
+      一般ニュース
+    </button>
+  </li>
+  {% if user.is_authenticated %}
+  <li class="nav-item">
+    <button
+      class="nav-link"
+      id="keywords-tab"
+      data-bs-toggle="pill"
+      data-bs-target="#keywords-content"
+      type="button"
+    >
+      マイキーワード
+    </button>
+  </li>
+  {% endif %}
+</ul>
 
-      <div
-        class="card-footer d-flex justify-content-between align-items-center"
-      >
-        <small class="text-muted">{{ record.source_name }}</small>
+<div class="tab-content">
+  <div class="tab-pane fade show active" id="general-content" role="tabpanel">
+    <ul class="nav nav-tabs mb-4">
+      <li class="nav-item">
         <a
-          href="{% url 'news_collector:article_detail' record.pk %}"
-          class="btn btn-sm btn-outline-primary"
-          >詳細を見る</a
+          class="nav-link {% if not current_category %}active{% endif %}"
+          href="{% url 'news_collector:index' %}"
+          >すべて</a
+        >
+      </li>
+      {% for value, label in category_choices %}
+      <li class="nav-item">
+        <a
+          class="nav-link {% if current_category == value %}active{% endif %}"
+          href="?cat={{ value }}"
+          >{{ label }}</a
+        >
+      </li>
+      {% endfor %}
+    </ul>
+
+    <div class="row row-cols-1 row-cols-md-2 g-4">
+      {% for record in general_articles %}
+      <div class="col">
+        <div class="card h-100 shadow-sm">
+          <div class="card-body">
+            <div class="mb-2 text-end">
+              <span class="badge bg-primary"
+                >{{ record.get_category_display }}</span
+              >
+            </div>
+            
+            <h5 class="card-title">{{ record.title_jp }}</h5>
+          </div>
+          <div
+            class="card-footer d-flex justify-content-between align-items-center"
+          >
+            <small class="text-muted">{{ record.source_name }}</small>
+            <a
+              href="{% url 'news_collector:article_detail' record.pk %}"
+              class="btn btn-sm btn-outline-primary"
+              >詳細を見る</a
+            >
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="tab-pane fade" id="keywords-content" role="tabpanel">
+    {% if keyword_groups %}
+    <ul class="nav nav-tabs mb-4" id="keywordSubTabNav" role="tablist">
+      {% for group in keyword_groups %}
+      <li class="nav-item" role="presentation">
+        <button
+          class="nav-link {% if forloop.first %}active{% endif %}"
+          id="tab-{{ group.id }}"
+          data-bs-toggle="tab"
+          data-bs-target="#content-{{ group.id }}"
+          type="button"
+        >
+          {{ group.word }}
+        </button>
+      </li>
+      {% endfor %}
+    </ul>
+
+    <div class="tab-content" id="keywordSubTabContent">
+      {% for group in keyword_groups %}
+      <div
+        class="tab-pane fade {% if forloop.first %}show active{% endif %}"
+        id="content-{{ group.id }}"
+        role="tabpanel"
+      >
+        <div class="row row-cols-1 row-cols-md-2 g-4">
+          {% for article in group.articles %}
+          <div class="col">
+            <div class="card h-100 shadow-sm">
+              <div class="card-body">
+                <div class="mb-2 text-end">
+                  <span class="badge bg-info text-dark">
+                    {{ group.word }}
+                  </span>
+                </div>
+                
+                <h5 class="card-title">{{ article.title_jp }}</h5>
+                <p class="card-text">
+                  <small class="text-muted">{{ article.source_name }}</small>
+                </p>
+                <a
+                  href="{% url 'news_collector:article_detail' article.pk %}"
+                  class="btn btn-sm btn-outline-primary"
+                  >詳細を見る</a
+                >
+              </div>
+            </div>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-5">
+      <div class="alert alert-light border">
+        <p class="text-muted mb-3">
+          マイページでキーワードを登録してください。
+        </p>
+        <a
+          href="{% url 'news_collector:my_page' %}"
+          class="btn btn-primary btn-sm"
+          >キーワードを登録しに行く</a
         >
       </div>
     </div>
+    {% endif %}
   </div>
-  {% endfor %}
 </div>
-
-<footer class="mt-5 text-center text-muted">
-  <p>&copy; {{ current_year }} ニュースレポートアプリ</p>
-</footer>
 {% endblock %}
