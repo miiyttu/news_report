@@ -126,6 +126,15 @@ STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 # settings.py に追加
 LOGIN_REDIRECT_URL = 'news_collector:index'  # ログイン後のリダイレクト先
 LOGOUT_REDIRECT_URL = 'news_collector:index'  # ログアウト後のリダイレクト先
+AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.ModelBackend']
+AUTH_PASSWORD_VALIDATORS = [
+    {
+        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        'OPTIONS': {
+            'min_length': 4,  
+        },
+    },
+]
 
 # --- デプロイ用のセキュリティ設定 ---
 if not DEBUG:

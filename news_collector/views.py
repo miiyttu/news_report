@@ -1,10 +1,12 @@
 from django.shortcuts import render, redirect
 from django.utils import timezone
-from django.views.generic import DetailView
-from .models import ArticleModel, UserKeyword
+from django.views.generic import DetailView, CreateView
+from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth import get_user_model
 from django.contrib.auth import logout
-from .forms import UserKeywordForm
+from .models import ArticleModel, UserKeyword
+from .forms import UserKeywordForm, CustomUserCreationForm
 from .services import fetch_all_categories, fetch_user_keywords_news
 
 
@@ -54,6 +56,18 @@ class ArticleDetailView(DetailView):
     model = ArticleModel
     template_name = "news_collector/article_detail.html"
     context_object_name = "record"
+    
+    
+class UserCreationView(CreateView):
+    model = get_user_model()
+    form_class = CustomUserCreationForm
+    template_name = "registration/user_creation.html"
+    success_url = reverse_lazy("news_collector:index")
+    def form_valid(self, form):
+        response = super().form_valid(form)
+        from django.contrib.auth import login
+        login(self.request, self.object)
+        return response
 
 
 @login_required
