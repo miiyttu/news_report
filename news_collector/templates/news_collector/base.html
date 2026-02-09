@@ -1,87 +1,137 @@
-<!doctype html>
 {% load static %}
+
+<!doctype html>
 <html lang="ja">
   <head>
-    <meta charset="UTF-8" />
+    <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{% block title %}ニュースアプリ{% endblock %}</title>
+    <title>{% block title %}News Report App{% endblock %}</title>
+
+    <!-- Bootstrap CSS -->
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
+
+    <!-- Google Fonts -->
     <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
     />
     <link
+      href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&display=swap"
       rel="stylesheet"
-      href="{% static 'news_collector/css/styles.css' %}"
     />
-    {% block extra_css %}{% endblock %}
+
+    <!-- Custom CSS -->
+    <link href="{% static 'news_collector/css/style.css' %}" rel="stylesheet" />
   </head>
   <body>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
-      <div class="container">
-        <a class="navbar-brand" href="{% url 'news_collector:index' %}">
-          <i class="fa-solid fa-newspaper me-2"></i>News Collector
-        </a>
+    <!-- Header -->
+    <header class="header-sticky">
+      <div class="container-fluid px-4">
+        <div class="row align-items-center py-3">
+          <div class="col-auto">
+            <div class="d-flex align-items-center gap-2">
+              <div class="bg-primary-custom text-white p-2 rounded">
+                <span class="material-symbols-outlined">article</span>
+              </div>
+              <h1 class="h4 mb-0 fw-bold text-primary-custom">
+                News Report App
+              </h1>
+            </div>
+          </div>
 
-        <button
-          class="navbar-toggler"
-          type="button"
-          data-bs-toggle="collapse"
-          data-bs-target="#navbarNav"
-        >
-          <span class="navbar-toggler-icon"></span>
-        </button>
+          <div class="col">
+            <nav class="nav-custom justify-content-end">
+              <div class="d-flex align-items-center gap-3">
+                {% if user.is_authenticated %}
+                <a
+                  href="{% url 'news_collector:my_page' %}"
+                  class="btn btn-primary-custom"
+                  >マイページ</a
+                >
+                {% else %}
+                <a
+                  href="{% url 'news_collector:register' %}"
+                  class="btn btn-primary-custom"
+                  >新規登録</a
+                >
+                <a
+                  href="{% url 'news_collector:login' %}"
+                  class="btn btn-primary-custom"
+                  >ログイン</a
+                >
+                {% endif %}
+              </div>
 
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav me-auto">
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'news_collector:index' %}"
-                >ホーム</a
-              >
-            </li>
-          </ul>
-
-          <ul class="navbar-nav align-items-center">
-            {% if user.is_authenticated %}
-            <li class="nav-item me-3 mb-3">
-              <span class="navbar-text text-white">
-                <i class="fa-solid fa-user-circle me-1"></i>
-                <strong>{{ user.username }}</strong> さん
-              </span>
-            </li>
-            <li class="nav-item">
-              <a
-                class="btn btn-outline-info btn-sm me-2"
-                href="{% url 'news_collector:my_page' %}"
-                >マイページ</a
-              >
-            </li>
-            <li class="nav-item">
-              <a href="{% url 'news_collector:logout' %}" class="btn btn-danger btn-sm">
-                ログアウト
-              </a>
-            </li>
-            {% else %}
-            <li class="nav-item">
-              <a class="nav-link" href="{% url 'news_collector:login' %}">ログイン</a>
-            </li>
-            <li class="nav-item">
-              <a
-                class="btn btn-primary btn-sm ms-2"
-                href="{% url 'news_collector:register' %}"
-                >新規登録</a
-              >
-            </li>
-            {% endif %}
-          </ul>
+              <div class="user-info">
+                {% if user.is_authenticated %}
+                <div
+                  class="user-avatar"
+                  style="
+                    background-image: url(&quot;https://lh3.googleusercontent.com/aida-public/AB6AXuABZnSH_ruVqYNsxst62oagnockaUzXWTlsgBKO37RLauVWTXevytcKdfp7lGw74_Q4xgHGmuCaC2bBdxdvPtEXRzKfEQeKsf0rjk6-ZC-UyNvtK_-8cdKXgrHxAHBTND-Qdl9W6wjkO3XYiXD8Xx24yVB0_fd_FenqsqH_DT2Ml1oqsiXcaso4I47eTwBpYKEO2GDF9z6wj1VqEQs9Rtq4QBLxkCaPM-_ZPE0xKXb3LxnVOvS4aGIlk1voZOjKnVPlMV2mVSTP4tM&quot;);
+                    background-size: cover;
+                    background-position: center;
+                  "
+                ></div>
+                <div class="d-flex align-items-center gap-2">
+                  <span class="user-welcome"
+                    >ようこそ {{ user.username }} さん</span
+                  >
+                  <div class="nav-divider"></div>
+                  <a
+                    href="{% url 'news_collector:logout' %}"
+                    class="btn"
+                    >ログアウト</a
+                  >
+                </div>
+                {% else %}
+                <div class="nav-divider"></div>
+                <div
+                  class="user-avatar bg-light d-flex align-items-center justify-content-center"
+                >
+                  <span
+                    class="material-symbols-outlined text-muted"
+                    style="font-size: 1rem"
+                    >person</span
+                  >
+                </div>
+                <span class="user-welcome">ようこそ ゲストさん</span>
+                {% endif %}
+              </div>
+            </nav>
+          </div>
         </div>
       </div>
-    </nav>
-    <div class="container py-2">{% block content %}{% endblock %}</div>
+    </header>
 
+    <!-- Main Content -->
+    <main class="flex-grow">
+      <div class="container px-4 py-5">
+        {% block content %}{% endblock %}
+      </div>
+    </main>
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container px-4 py-5">
+        <div class="row">
+          <div class="col-md-6 mb-4 mb-md-0">
+            <div class="d-flex align-items-center gap-2 mb-2">
+              <span class="material-symbols-outlined text-primary-custom">article</span>
+              <h5 class="mb-0 fw-bold text-primary-custom">News Report App</h5>
+            </div>
+            <p class="text-muted small text-start">あなた専用のニュース集約アプリ</p>
+          </div>
+        </div>
+        <hr class="my-4" />
+        <div class="text-center">
+          <p class="text-muted small mb-0">© 2026 News Report App.</p>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     {% block extra_js %}{% endblock %}
   </body>

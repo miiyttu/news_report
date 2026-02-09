@@ -1,89 +1,241 @@
-/* static/news_collector/css/styles.css */
-.japanese-title {
-    color: #0d6efd;
-    border-bottom: 2px solid #f0f0f0;
-    padding-bottom: 15px;
-    margin-bottom: 20px;
-}
+/* ========================================
+   ベースページ用スタイル
+   ======================================== */
 
+/* Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap');
 
-
-.article-meta {
+/* 基本設定 */
+body {
+    font-family: 'Noto Sans JP', sans-serif;
     background-color: #f8f9fa;
-    padding: 15px;
-    border-radius: 5px;
-    margin-bottom: 25px;
 }
 
-.article-content {
-    line-height: 1.8;
-    font-size: 1.1rem;
+/* ヘッダー */
+header {
+    background-color: white;
+    border-bottom: 1px solid #e9ecef;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
-.back-button {
-    margin-top: 30px;
+.header-sticky {
+    position: sticky;
+    top: 0;
+    z-index: 1030;
+    background-color: white;
+    border-bottom: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
-/* カードのスタイル（index.html用） */
-.card {
-    transition: transform 0.2s;
-    margin-bottom: 20px;
+.navbar-brand {
+    font-weight: 700;
+    color: #1173d4 !important;
 }
 
-.card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+.text-primary-custom {
+    color: #1173d4 !important;
 }
 
-.card .japanese-title {
-    font-size: 1.25rem;
+.bg-primary-custom {
+    background-color: #1173d4 !important;
 }
 
+.nav-custom {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
 
-.source-info {
-    font-size: 0.85rem;
+.nav-divider {
+    height: 1.5rem;
+    width: 1px;
+    background-color: #e2e8f0;
+    margin: 0 0.5rem;
+}
+
+.user-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+/* ユーザーアバター */
+.user-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #e9ecef;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: #6c757d;
+    line-height: 1;
+    text-align: center;
+}
+
+.user-welcome {
+    font-size: 0.875rem;
+    font-weight: 500;
     color: #6c757d;
 }
 
-.card-footer {
-    background-color: rgba(0,0,0,0.03);
-    border-top: 1px solid rgba(0,0,0,0.125);
+/* フッター */
+footer {
+    background-color: white;
+    border-top: 1px solid #e9ecef;
+    margin-top: auto;
 }
 
-/* カテゴリタブのスタイル */
+/* 共通ボタンスタイル */
+.btn {
+    padding: 0.5rem 1rem;
+    background-color: white;
+    border: 1px solid rgba(0, 123, 255, 0.2);
+    color: #1173d4;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-radius: 1rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
+.btn:hover {
+    border-color: #1173d4;
+    color: #0d6efd;
+}
+
+.btn-primary-custom {
+    background-color: #1173d4;
+    color: white;
+    border-color: #1173d4;
+}
+
+.btn-primary-custom:hover {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    color: white;
+}
+
+/* ========================================
+   インデックスページ用スタイル
+   ======================================== */
+
+/* タブナビゲーション */
+.nav-pills {
+    gap: 1rem;
+}
+
+.nav-pills .btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 2rem;
+    font-weight: 500;
+}
+
+.nav-pills .btn.active {
+    background-color: #1173d4;
+    color: white;
+    border-color: #1173d4;
+}
+
+/* ツールチップバブル */
+.tooltip-content {
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 0.5rem;
+    background: white;
+    border: 1px solid #e9ecef;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    z-index: 1000;
+    min-width: 250px;
+}
+
+.bubble-tail {
+    position: absolute;
+    top: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 16px;
+    height: 16px;
+    background-color: white;
+    border: 1px solid #e9ecef;
+    border-bottom: none;
+    border-right: none;
+    transform: translateX(-50%) rotate(45deg);
+}
+
+/* カテゴリタブ */
 .nav-tabs .nav-link {
-    color: #495057;
-    border: 1px solid transparent;
-    border-top-left-radius: 0.25rem;
-    border-top-right-radius: 0.25rem;
-    transition: all 0.3s ease;
+    color: #6c757d;
+    border: none;
+    border-bottom: 2px solid transparent;
+    padding: 0.75rem 1rem;
 }
 
 .nav-tabs .nav-link:hover {
-    border-color: #e9ecef #e9ecef #dee2e6;
-    color: #0d6efd;
+    border-bottom-color: #1173d4;
+    color: #1173d4;
 }
 
 .nav-tabs .nav-link.active {
-    color: #0d6efd;
-    background-color: #fff;
-    border-color: #dee2e6 #dee2e6 #fff;
+    border-bottom-color: #1173d4;
+    color: #1173d4;
     font-weight: 500;
 }
 
-/* カテゴリバッジのスタイル */
-.badge {
-    font-size: 0.75rem;
-    font-weight: 500;
-    padding: 0.35em 0.65em;
-}
-
-/* カードのホバーエフェクト */
+/* ニュースカード */
 .card {
-    transition: transform 0.2s, box-shadow 0.2s;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .card:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+}
+
+/* バッジ */
+.badge {
+    display: inline-block;
+    padding: 0.35em 0.65em;
+    font-size: 0.75em;
+    font-weight: 700;
+    line-height: 1;
+    color: white;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: 0.25rem;
+}
+
+/* カテゴリバッジ色 */
+.badge.bg-business { background-color: #343a40; }
+.badge.bg-technology { background-color: #6f42c1; }
+.badge.bg-science { background-color: #198754; }
+.badge.bg-health { background-color: #dc3545; }
+.badge.bg-sports { background-color: #fd7e14; }
+.badge.bg-entertainment { background-color: #e83e8c; }
+
+/* マイキーワード用バッジ */
+.badge-info { background-color: #17a2b8; }
+
+/* レスポンシブ */
+@media (max-width: 768px) {
+    .nav-pills {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+    
+    .tooltip-content {
+        left: 0;
+        transform: none;
+        margin-top: 1rem;
+    }
 }

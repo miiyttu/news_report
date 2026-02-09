@@ -1,19 +1,19 @@
 {% extends 'news_collector/base.html' %}
-{% load static %}
-{% block title %}最新ニュース一覧{% endblock %}
+{% load static %}{% block title %}最新ニュース一覧{% endblock %}
 {% block content %}
 <h1 class="mb-4">最新ニュース</h1>
 
 <div class="text-end mb-3">
-    <a href="?reloaded=true" class="btn btn-sm btn-outline-primary">
-        <i class="fas fa-sync-alt me-1"></i>ニュースを更新
-    </a>
+  <a href="?reloaded=true" class="btn btn-info">
+    <span class="material-symbols-outlined">refresh</span>
+    ニュースを更新
+  </a>
 </div>
 
-<ul class="nav nav-pills mb-4" id="mainTab" role="tablist">
+<ul class="nav nav-pills mb-5 gap-3" id="mainTab" role="tablist">
   <li class="nav-item">
     <button
-      class="nav-link active"
+      class="btn active"
       id="general-tab"
       data-bs-toggle="pill"
       data-bs-target="#general-content"
@@ -25,14 +25,46 @@
   {% if user.is_authenticated %}
   <li class="nav-item">
     <button
-      class="nav-link"
+      class="btn"
       id="keywords-tab"
       data-bs-toggle="pill"
       data-bs-target="#keywords-content"
       type="button"
     >
+      <span class="material-symbols-outlined filled">star</span>
       マイキーワード
     </button>
+  </li>
+  {% else %}
+  <li class="nav-item">
+    <div class="d-flex align-items-center">
+      <button class="btn">
+        <span class="material-symbols-outlined filled">star</span>
+        マイキーワード
+      </button>
+      <div class="bubble-tail"></div>
+
+      <div class="tooltip-content">
+        <div class="d-flex align-items-center gap-2 mb-2">
+          <p class="pt-3">
+            登録すると気になるニュースを自動でお届け！<br />
+            新規登録かログインでマイキーワードを利用できます
+          </p>
+          <div class="d-flex justify-content-center gap-2">
+            <a
+              href="{% url 'news_collector:register' %}"
+              class="btn btn-primary-custom"
+              >新規登録</a
+            >
+            <a
+              href="{% url 'news_collector:login' %}"
+              class="btn btn-primary-custom"
+              >ログイン</a
+            >
+          </div>
+        </div>
+      </div>
+    </div>
   </li>
   {% endif %}
 </ul>
@@ -64,11 +96,11 @@
         <div class="card h-100 shadow-sm">
           <div class="card-body">
             <div class="mb-2 text-end">
-              <span class="badge bg-primary"
-                >{{ record.get_category_display }}</span
-              >
+              <span class="badge bg-{{ record.category }}">
+                {{ record.get_category_display }}
+              </span>
             </div>
-            
+
             <h5 class="card-title">{{ record.title_jp }}</h5>
           </div>
           <div
@@ -118,15 +150,17 @@
             <div class="card h-100 shadow-sm">
               <div class="card-body">
                 <div class="mb-2 text-end">
-                  <span class="badge bg-info text-dark">
+                  <span class="badge bg-info">
                     {{ group.word }}
                   </span>
                 </div>
-                
+
                 <h5 class="card-title">{{ article.title_jp }}</h5>
-                <p class="card-text">
-                  <small class="text-muted">{{ article.source_name }}</small>
-                </p>
+              </div>
+              <div
+                class="card-footer d-flex justify-content-between align-items-center"
+              >
+                <small class="text-muted">{{ article.source_name }}</small>
                 <a
                   href="{% url 'news_collector:article_detail' article.pk %}"
                   class="btn btn-sm btn-outline-primary"

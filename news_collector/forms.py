@@ -25,6 +25,14 @@ class CustomAuthenticationForm(AuthenticationForm):
         self.fields['username'].label = 'ユーザー名'
         self.fields['password'].label = 'パスワード'
         
+        self.fields['username'].help_text = (
+            "ユーザー名は150文字以下の英数字と @/./+/-/_ のみ使用できます"
+        )
+        
+        self.fields['password'].help_text =(
+            "パスワードは4文字以上で入力してください"
+        )
+        
         # エラーメッセージを日本語に
         self.fields['username'].error_messages = {
             'required': 'ユーザー名を入力してください。',
