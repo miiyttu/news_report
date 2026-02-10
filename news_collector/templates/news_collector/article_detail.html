@@ -2,42 +2,53 @@
 {% load static %}
 {% block content %}
 <div class="container mt-4">
-  <div class="article-header mb-4">
-    <h1 class="article-title mb-3">{{ record.title_jp|striptags }}</h1>
-    <div class="article-meta d-flex gap-3 mb-3">
-      <span
-        ><i class="far fa-calendar-alt me-2"></i>
-        {{record.published_at|date:"Y年m月d日 H:i" }}
-      </span>
-      <span><i class="fas fa-newspaper me-2"></i>{{ record.source_name }}</span>
+  <div class="row justify-content-center">
+    <div class="col-lg-8">
+      <div class="card shadow-sm mb-4">
+        <div class="card-body">
+          <!-- カテゴリーと日付 -->
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <span class="badge bg-primary">{{ record.get_category_display|default:"未分類" }}</span>
+            <small class="text-muted">
+              <i class="far fa-calendar-alt me-1"></i>
+              {{ record.published_at|date:"Y年m月d日 H:i" }}
+            </small>
+          </div>
+          
+          <!-- タイトル -->
+          <h1 class="h3 mb-3">{{ record.title_jp|striptags }}</h1>
+          
+          <!-- ソース名 -->
+          {% if record.source_name %}
+          <div class="d-flex align-items-center mb-4">
+            <i class="fas fa-newspaper me-2 text-muted"></i>
+            <span class="text-muted">{{ record.source_name }}</span>
+          </div>
+          {% endif %}
+
+          <!-- お知らせカード -->
+          <div class="mb-4 border rounded p-3 bg-light">
+            <p class="mb-0 text-muted">
+              この記事は外部サイトのコンテンツです。著作権保護のため、全文はリンク先の公式サイトにてご確認ください。
+            </p>
+          </div>
+
+          <!-- ボタングループ -->
+          <div class="d-grid gap-3 d-md-flex justify-content-md-center">
+            <a href="{{ record.url }}" 
+               target="_blank" 
+               rel="noopener noreferrer" 
+               class="btn btn-primary-custom px-4">
+              公式サイトで読む
+            </a>
+            <a href="{% url 'news_collector:index' %}" 
+               class="btn btn-primary-custom px-4">
+              一覧に戻る
+            </a>
+          </div>
+        </div>
+      </div>
     </div>
-  </div>
-
-  <div class="card mb-4">
-    <div class="card-body">
-      <p class="text-muted mb-0">
-        <i class="fas fa-info-circle me-2"></i>
-        この記事は外部サイトのコンテンツです。著作権保護のため、全文はリンク先の公式サイトにてご確認ください。
-      </p>
-    </div>
-  </div>
-
-  <div class="text-center mb-5">
-    <a
-      href="{{ record.url }}"
-      target="_blank"
-      rel="noopener noreferrer"
-      class="btn btn-primary btn-lg"
-    >
-      この記事の続きを公式サイトで読む
-      <i class="fas fa-external-link-alt ms-2"></i>
-    </a>
-  </div>
-
-  <div class="text-center">
-    <a href="{% url 'news_collector:index' %}" class="btn btn-outline-secondary"
-      >一覧に戻る</a
-    >
   </div>
 </div>
 {% endblock %}

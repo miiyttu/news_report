@@ -69,6 +69,9 @@ class UserCreationView(CreateView):
         login(self.request, self.object)
         return response
 
+def get_latest_news_time():
+    latest = ArticleModel.objects.order_by('-updated_at').first()
+    return latest.updated_at if latest else None
 
 @login_required
 def my_page(request):

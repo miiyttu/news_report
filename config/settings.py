@@ -30,7 +30,7 @@ INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
-    "django.contrib.staticfiles",
+    "django_apscheduler",
     'news_collector',
 ]
 
@@ -56,7 +56,8 @@ TEMPLATES = [
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
-                "django.template.context_processors.request",
+                'django.template.context_processors.request',
+                'news_collector.context_processors.latest_news_time',
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
             ],
@@ -135,6 +136,7 @@ AUTH_PASSWORD_VALIDATORS = [
         },
     },
 ]
+
 
 # --- デプロイ用のセキュリティ設定 ---
 if not DEBUG:

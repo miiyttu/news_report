@@ -24,6 +24,7 @@ class ArticleModel(models.Model):
     description = models.TextField("概要", blank=True)
     published_at = models.DateTimeField("公開日時", default=timezone.now)
     created_at = models.DateTimeField("作成日時", default=timezone.now)
+    updated_at = models.DateTimeField("更新日時", auto_now=True)
     keyword_tag = models.CharField("検索キーワード", max_length=100, blank=True)
     
     class Meta:
