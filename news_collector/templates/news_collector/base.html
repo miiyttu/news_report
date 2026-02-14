@@ -1,103 +1,66 @@
 {% load static %}
-
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ja">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{% block title %}News Report App{% endblock %}</title>
-
+    <title>
+      {% block title %}News Report App{% endblock %}
+    </title>
     <!-- Bootstrap CSS -->
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+          rel="stylesheet" />
     <!-- Google Fonts -->
-    <link
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&display=swap"
-      rel="stylesheet"
-    />
-
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+          rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,200..800;1,6..72,200..800&display=swap"
+          rel="stylesheet" />
     <!-- Custom CSS -->
     <link href="{% static 'news_collector/css/style.css' %}" rel="stylesheet" />
   </head>
-  <body>
+  <body id="base-page">
     <!-- Header -->
     <header class="header-sticky">
-      <div class="container-fluid px-4">
+      <div class="container-fluid">
         <div class="row align-items-center py-3">
           <div class="col-auto">
-            <div class="d-flex align-items-center gap-2 mb-3">
+            <div class="d-flex align-items-center gap-2">
               <div class="bg-primary-custom text-white p-2 rounded">
                 <span class="material-symbols-outlined">article</span>
               </div>
-              <h1 class="h4 mb-0 fw-bold text-primary-custom">
-                News Report App
-              </h1>
+              <h1 class="h4 mb-0 fw-bold text-primary-custom">News Report App</h1>
             </div>
           </div>
-
           <div class="col">
             <nav class="nav-custom justify-content-end">
               <div class="d-flex align-items-center gap-3">
                 {% if user.is_authenticated %}
-                <a
-                  href="{% url 'news_collector:my_page' %}"
-                  class="btn btn-primary-custom"
-                  >マイページ</a
-                >
+                  <a href="{% url 'news_collector:my_page' %}"
+                     class="btn btn-primary-custom">マイページ</a>
                 {% else %}
-                <a
-                  href="{% url 'news_collector:register' %}"
-                  class="btn btn-primary-custom"
-                  >新規登録</a
-                >
-                <a
-                  href="{% url 'news_collector:login' %}"
-                  class="btn btn-primary-custom"
-                  >ログイン</a
-                >
+                  <a href="{% url 'news_collector:register' %}"
+                     class="btn btn-primary-custom">新規登録</a>
+                  <a href="{% url 'news_collector:login' %}"
+                     class="btn btn-primary-custom">ログイン</a>
                 {% endif %}
               </div>
-
               <div class="user-info">
                 {% if user.is_authenticated %}
-                <div
-                  class="user-avatar"
-                  style="
-                    background-image: url(&quot;https://lh3.googleusercontent.com/aida-public/AB6AXuABZnSH_ruVqYNsxst62oagnockaUzXWTlsgBKO37RLauVWTXevytcKdfp7lGw74_Q4xgHGmuCaC2bBdxdvPtEXRzKfEQeKsf0rjk6-ZC-UyNvtK_-8cdKXgrHxAHBTND-Qdl9W6wjkO3XYiXD8Xx24yVB0_fd_FenqsqH_DT2Ml1oqsiXcaso4I47eTwBpYKEO2GDF9z6wj1VqEQs9Rtq4QBLxkCaPM-_ZPE0xKXb3LxnVOvS4aGIlk1voZOjKnVPlMV2mVSTP4tM&quot;);
-                    background-size: cover;
-                    background-position: center;
-                  "
-                ></div>
-                <div class="d-flex align-items-center gap-2">
-                  <span class="user-welcome"
-                    >ようこそ {{ user.username }} さん</span
-                  >
-                  <div class="nav-divider"></div>
-                  <a
-                    href="{% url 'news_collector:logout' %}"
-                    class="btn"
-                    >ログアウト</a
-                  >
-                </div>
+                  <div class="user-avatar"
+                       style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuABZnSH_ruVqYNsxst62oagnockaUzXWTlsgBKO37RLauVWTXevytcKdfp7lGw74_Q4xgHGmuCaC2bBdxdvPtEXRzKfEQeKsf0rjk6-ZC-UyNvtK_-8cdKXgrHxAHBTND-Qdl9W6wjkO3XYiXD8Xx24yVB0_fd_FenqsqH_DT2Ml1oqsiXcaso4I47eTwBpYKEO2GDF9z6wj1VqEQs9Rtq4QBLxkCaPM-_ZPE0xKXb3LxnVOvS4aGIlk1voZOjKnVPlMV2mVSTP4tM');
+                              background-size: cover;
+                              background-position: center"></div>
+                  <div class="d-flex align-items-center gap-2">
+                    <span class="user-welcome">ようこそ {{ user.username }} さん</span>
+                    <div class="nav-divider"></div>
+                    <a href="{% url 'news_collector:logout' %}" class="btn">ログアウト</a>
+                  </div>
                 {% else %}
-                <div class="nav-divider"></div>
-                <div
-                  class="user-avatar bg-light d-flex align-items-center justify-content-center"
-                >
-                  <span
-                    class="material-symbols-outlined text-muted"
-                    style="font-size: 1rem"
-                    >person</span
-                  >
-                </div>
-                <span class="user-welcome">ようこそ ゲストさん</span>
+                  <div class="nav-divider"></div>
+                  <div class="user-avatar bg-light d-flex align-items-center justify-content-center">
+                    <span class="material-symbols-outlined text-muted" style="font-size: 1rem">person</span>
+                  </div>
+                  <span class="user-welcome">ようこそ ゲストさん</span>
                 {% endif %}
               </div>
             </nav>
@@ -105,7 +68,6 @@
         </div>
       </div>
     </header>
-
     <!-- Main Content -->
     <main class="flex-grow">
       <div class="container px-4 py-5">
@@ -130,7 +92,6 @@
         </div>
       </div>
     </footer>
-
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     {% block extra_js %}{% endblock %}

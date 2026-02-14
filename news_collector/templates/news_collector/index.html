@@ -2,238 +2,262 @@
 {% load static %}
 {% block title %}最新ニュース一覧{% endblock %}
 {% block content %}
-<h1 class="mb-4">最新ニュース</h1>
-
-<div class="text-end mb-3">
-  <a href="?reloaded=true" class="btn">
-    <span class="material-symbols-outlined">refresh</span>
-    ニュースを更新
-  </a>
-  {% load tz %} 
-  {% get_current_timezone as TIME_ZONE %}
-
-  <div class="last-updated">
-    {% if latest_news_time %}
-    最終更新: {{ latest_news_time|date:"Y年m月d日H時i分" }}
-    {% else %} まだ更新されていません {% endif %}
+  <h1 class="mb-4">最新ニュース</h1>
+  <div class="text-end mb-3 id="index-page">
+    <a href="?reloaded=true" class="btn">
+      <span class="material-symbols-outlined">refresh</span>
+      ニュースを更新
+    </a>
+    {% load tz %}
+    {% get_current_timezone as TIME_ZONE %}
+    <div class="last-updated">
+      {% if latest_news_time %}
+        最終更新: {{ latest_news_time|date:"Y年m月d日H時i分" }}
+      {% else %}
+        まだ更新されていません
+      {% endif %}
+    </div>
   </div>
-</div>
-
-<ul
-  class="nav nav-pills d-flex align-items-center mb-5 gap-3"
-  id="mainTab"
-  role="tablist"
->
+  <!--タブメニュー-->
+  <ul class="nav nav-pills d-flex align-items-center mb-5 gap-3"
+      id="mainTab"
+      role="tablist">
+    <li class="nav-item">
+      <button class="btn active"
+              id="general-tab"
+              data-bs-toggle="pill"
+              data-bs-target="#general-content"
+              type="button">一般ニュース</button>
+    </li>
+    {% if user.is_authenticated %}
+      <li class="nav-item">
+        <button class="btn"
+                id="prefecture-tab"
+                data-bs-toggle="pill"
+                data-bs-target="#prefecture-content"
+                type="button">
+          {% if user_prefecture %}
+            <span class="material-symbols-outlined filled">location_on</span>
+            {{ user_prefecture }}
+          </button>
+        </li>
+      {% else %}
+        <span class="material-symbols-outlined filled">location_on</span>
+        都道府県ニュース
+      </button>
+    </li>
+  {% endif %}
   <li class="nav-item">
-    <button
-      class="btn active"
-      id="general-tab"
-      data-bs-toggle="pill"
-      data-bs-target="#general-content"
-      type="button"
-    >
-      一般ニュース
-    </button>
-  </li>
-  {% if user.is_authenticated %}
-  <li class="nav-item">
-    <button
-      class="btn"
-      id="keywords-tab"
-      data-bs-toggle="pill"
-      data-bs-target="#keywords-content"
-      type="button"
-    >
+    <button class="btn"
+            id="keywords-tab"
+            data-bs-toggle="pill"
+            data-bs-target="#keywords-content"
+            type="button">
       <span class="material-symbols-outlined filled">star</span>
       マイキーワード
     </button>
   </li>
-  {% else %}
+{% else %}
   <li class="nav-item">
     <div class="d-flex align-items-center flex-wrap sp gap-4">
       <button class="btn me-3">
-        <span class="material-symbols-outlined filled">star</span>
-        マイキーワード
+        <span class="material-symbols-outlined filled">tune</span>
+        カスタムニュース
       </button>
-
       <div class="d-flex align-items-center">
         <div class="bubble-tail-left"></div>
         <div class="tooltip-content-inline">
-          <div class="d-flex align-items-center sp gap-2 flex-wrap">
+          <div class="sp gap-2 flex-wrap">
             <p>
-              登録すると気になるニュースを自動でお届け！<br />
-              新規登録かログインでマイキーワードを利用できます
+              気になるキーワードや地元のニュースをお届け！
+              <br />
+              新規登録かログインで利用できます
             </p>
-            <div class="d-flex justify-content-center gap-2">
-              <a
-                href="{% url 'news_collector:register' %}"
-                class="btn btn-primary-custom"
-                >新規登録</a
-              >
-              <a
-                href="{% url 'news_collector:login' %}"
-                class="btn btn-primary-custom"
-                >ログイン</a
-              >
+            <div class="d-flex justify-content-center gap-3">
+              <a href="{% url 'news_collector:register' %}"
+                 class="btn btn-primary-custom">新規登録</a>
+              <a href="{% url 'news_collector:login' %}"
+                 class="btn btn-primary-custom">ログイン</a>
             </div>
           </div>
         </div>
       </div>
     </div>
   </li>
-  {% endif %}
+{% endif %}
 </ul>
-
-<div class="tab-content">
-  <div class="tab-pane fade show active" id="general-content" role="tabpanel">
+<!--タブコンテンツ　一般ニュース-->
+<div class="tab-content" id="mainTabContent">
+  <div class="tab-pane fade show active"
+       id="general-content"
+       role="tabpanel">
     <ul class="nav nav-tabs mb-4">
       <li class="nav-item">
-        <a
-          class="nav-link {% if not current_category %}active{% endif %}"
-          href="{% url 'news_collector:index' %}"
-          >すべて</a
-        >
+        <a class="nav-link {% if not current_category %}active{% endif %}"
+           href="{% url 'news_collector:index' %}">すべて</a>
       </li>
       {% for value, label in category_choices %}
-      <li class="nav-item">
-        <a
-          class="nav-link {% if current_category == value %}active{% endif %}"
-          href="?cat={{ value }}"
-          >{{ label }}</a
-        >
-      </li>
+        <li class="nav-item">
+          <a class="nav-link {% if current_category == value %}active{% endif %}"
+             href="?cat={{ value }}">{{ label }}</a>
+        </li>
       {% endfor %}
     </ul>
-
     <div class="row row-cols-1 row-cols-md-2 g-4">
       {% for record in general_articles %}
-      <div class="col">
-        <div class="card h-100 shadow-sm">
-          <div class="card-body">
-            <div class="mb-2 text-end">
-              <span class="badge bg-{{ record.category }}">
-                {{ record.get_category_display }}
-              </span>
+        <div class="col">
+          <div class="card h-100 shadow-sm">
+            <div class="card-body">
+              <div class="mb-2 text-end">
+                <span class="badge bg-{{ record.category }}">{{ record.get_category_display }}</span>
+              </div>
+              <h5 class="card-title">{{ record.title_jp }}</h5>
             </div>
-
-            <h5 class="card-title">{{ record.title_jp }}</h5>
-          </div>
-          <div
-            class="card-footer d-flex justify-content-between align-items-center"
-          >
-            <small class="text-muted">{{ record.source_name }}</small>
-            <a
-              href="{% url 'news_collector:article_detail' record.pk %}"
-              class="btn btn-sm btn-outline-primary"
-              >詳細を見る</a
-            >
+            <div class="card-footer d-flex justify-content-between align-items-center">
+              <small class="text-muted">{{ record.source_name }}</small>
+              <a href="{% url 'news_collector:article_detail' record.pk %}"
+                 class="btn">詳細を見る</a>
+            </div>
           </div>
         </div>
-      </div>
       {% endfor %}
     </div>
   </div>
-
-  <div class="tab-pane fade" id="keywords-content" role="tabpanel">
-    {% if keyword_groups %}
-    <ul class="nav nav-tabs mb-4" id="keywordSubTabNav" role="tablist">
-      {% for group in keyword_groups %}
-      <li class="nav-item" role="presentation">
-        <button
-          class="nav-link {% if forloop.first %}active{% endif %}"
-          id="tab-{{ group.id }}"
-          data-bs-toggle="tab"
-          data-bs-target="#content-{{ group.id }}"
-          type="button"
-        >
-          {{ group.word }}
-        </button>
-      </li>
-      {% endfor %}
-    </ul>
-
-    <div class="tab-content" id="keywordSubTabContent">
-      {% for group in keyword_groups %}
-      <div
-        class="tab-pane fade {% if forloop.first %}show active{% endif %}"
-        id="content-{{ group.id }}"
-        role="tabpanel"
-      >
+  <!--タブコンテンツ 都道府県ニュース-->
+  <div class="tab-pane fade" id="prefecture-content" role="tabpanel">
+    {% if user_prefecture %}
+      <div class="mb-4">
+        <h4 class="text-primary-custom">
+          <i class="fa-solid fa-location-dot me-2"></i>
+          {{ user_prefecture }}のニュース
+        </h4>
+      </div>
+      {% if prefecture_articles %}
         <div class="row row-cols-1 row-cols-md-2 g-4">
-          {% for article in group.articles %}
-          <div class="col">
-            <div class="card h-100 shadow-sm">
-              <div class="card-body">
-                <div class="mb-2 text-end">
-                  <span class="badge bg-info"> {{ group.word }} </span>
+          {% for article in prefecture_articles %}
+            <div class="col">
+              <div class="card h-100 shadow-sm">
+                <div class="card-body">
+                  <div class="mb-2 text-end">
+                    <span class="badge bg-warning text-dark">{{ user_prefecture }}</span>
+                  </div>
+                  <h5 class="card-title">{{ article.title_jp }}</h5>
                 </div>
-
-                <h5 class="card-title">{{ article.title_jp }}</h5>
-              </div>
-              <div
-                class="card-footer d-flex justify-content-between align-items-center"
-              >
-                <small class="text-muted">{{ article.source_name }}</small>
-                <a
-                  href="{% url 'news_collector:article_detail' article.pk %}"
-                  class="btn btn-sm btn-outline-primary"
-                  >詳細を見る</a
-                >
+                <div class="card-footer d-flex justify-content-between align-items-center">
+                  <small class="text-muted">{{ article.source_name }}</small>
+                  <a href="{% url 'news_collector:article_detail' article.pk %}"
+                     class="btn btn-sm btn-outline-primary">詳細を見る</a>
+                </div>
               </div>
             </div>
-          </div>
           {% endfor %}
         </div>
-      </div>
-      {% endfor %}
-    </div>
+      {% else %}
+        <div class="text-center py-5">
+          <div class="alert alert-light border">
+            <p class="text-muted mb-3">{{ user_prefecture }}のニュースがありません。</p>
+            <p class="text-muted mb-0">
+              <small>ニュースを更新してください</small>
+            </p>
+          </div>
+        </div>
+      {% endif %}
     {% else %}
-    <div class="text-center py-5">
-      <div class="alert alert-light border">
-        <p class="text-muted mb-3">
-          マイページでキーワードを登録してください。
-        </p>
-        <a
-          href="{% url 'news_collector:my_page' %}"
-          class="btn btn-primary btn-sm"
-          >キーワードを登録しに行く</a
-        >
+      <div class="text-center py-5">
+        <div class="alert alert-light border">
+          <p class="text-muted mb-3">マイページで住んでる都道府県を登録してください</p>
+          <a href="{% url 'news_collector:my_page' %}"
+             class="btn btn-primary btn-sm">住んでる都道府県を登録しに行く</a>
+        </div>
       </div>
-    </div>
+    {% endif %}
+  </div>
+  <!--タブコンテンツ マイキーワード-->
+  <div class="tab-pane fade" id="keywords-content" role="tabpanel">
+    {% if keyword_groups %}
+      <ul class="nav nav-tabs mb-4" id="keywordSubTabNav" role="tablist">
+        {% for group in keyword_groups %}
+          <li class="nav-item" role="presentation">
+            <button class="nav-link {% if forloop.first %}active{% endif %}"
+                    id="tab-{{ group.id }}"
+                    data-bs-toggle="tab"
+                    data-bs-target="#content-{{ group.id }}"
+                    type="button">{{ group.word }}</button>
+          </li>
+        {% endfor %}
+      </ul>
+      <div class="tab-content" id="keywordSubTabContent">
+        {% for group in keyword_groups %}
+          <div class="tab-pane fade {% if forloop.first %}show active{% endif %}"
+               id="content-{{ group.id }}"
+               role="tabpanel">
+            <div class="row row-cols-1 row-cols-md-2 g-4">
+              {% for article in group.articles %}
+                <div class="col">
+                  <div class="card h-100 shadow-sm">
+                    <div class="card-body">
+                      <div class="mb-2 text-end">
+                        <span class="badge bg-info">{{ group.word }}</span>
+                      </div>
+                      <h5 class="card-title">{{ article.title_jp }}</h5>
+                    </div>
+                    <div class="card-footer d-flex justify-content-between align-items-center">
+                      <small class="text-muted">{{ article.source_name }}</small>
+                      <a href="{% url 'news_collector:article_detail' article.pk %}"
+                         class="btn btn-sm btn-outline-primary">詳細を見る</a>
+                    </div>
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="text-center py-5">
+        <div class="alert alert-light border">
+          <p class="text-muted mb-3">マイページでキーワードを登録してください</p>
+          <a href="{% url 'news_collector:my_page' %}"
+             class="btn btn-primary btn-sm">キーワードを登録しに行く</a>
+        </div>
+      </div>
     {% endif %}
   </div>
 </div>
 {% block extra_js %}
-<script>
-// 30分ごとにページを強制リロード（キャッシュクリア付き）
-setInterval(function() {
+  <script>
+  // 30分ごとにページを強制リロード（キャッシュクリア付き）
+  setInterval(function () {
     location.reload(true);
-}, 1800000);  // 30分 = 30 × 60 × 1000ミリ秒
+  }, 1800000); // 30分 = 30 × 60 × 1000ミリ秒
 
-// 5分ごとに更新時刻をチェック
-setInterval(function() {
-    fetch(location.href + '?t=' + Date.now())  // キャッシュ回避用パラメータ
-        .then(response => response.text())
-        .then(html => {
-            const parser = new DOMParser();
-            const doc = parser.parseFromString(html, 'text/html');
-            const newUpdateTime = doc.querySelector('.last-updated')?.textContent?.trim();
-            const currentTime = document.querySelector('.last-updated')?.textContent?.trim();
-            
-            console.log('現在の時刻:', currentTime);
-            console.log('新しい時刻:', newUpdateTime);
-            
-            // 更新時刻が変わっていたらページをリロード
-            if (newUpdateTime && currentTime && newUpdateTime !== currentTime) {
-                console.log('更新を検知、リロードします');
-                location.reload(true);
-            }
-        })
-        .catch(error => {
-            console.log('更新チェックエラー:', error);
-        });
-}, 300000);  // 5分 = 5 × 60 × 1000ミリ秒
-</script>
+  // 5分ごとに更新時刻をチェック
+  setInterval(function () {
+    fetch(location.href + "?t=" + Date.now()) // キャッシュ回避用パラメータ
+      .then((response) => response.text())
+      .then((html) => {
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(html, "text/html");
+        const newUpdateTime = doc
+          .querySelector(".last-updated")
+          ?.textContent?.trim();
+        const currentTime = document
+          .querySelector(".last-updated")
+          ?.textContent?.trim();
+
+        console.log("現在の時刻:", currentTime);
+        console.log("新しい時刻:", newUpdateTime);
+
+        // 更新時刻が変わっていたらページをリロード
+        if (newUpdateTime && currentTime && newUpdateTime !== currentTime) {
+          console.log("更新を検知、リロードします");
+          location.reload(true);
+        }
+      })
+      .catch((error) => {
+        console.log("更新チェックエラー:", error);
+      });
+  }, 300000); // 5分 = 5 × 60 × 1000ミリ秒
+  </script>
 {% endblock %}
 {% endblock %}
-

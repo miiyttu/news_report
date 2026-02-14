@@ -1,88 +1,104 @@
 {% extends 'news_collector/base.html' %}
 {% load static %}
-{% block title %}マイページ - ニュースレポート{% endblock %}
-
+{% block title %}マイページ{% endblock %}
 {% block content %}
-<div class="container mt-5">
+  <div id="my-page" class="container mt-5">
     <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
-                    <h4 class="mb-0">マイページ</h4>
+      <div class="col-md-6">
+        <div class="card">
+          <div class="card-header">
+            <h4 class="mb-0">マイページ</h4>
+          </div>
+          <div class="card-body p-4">
+            <div class="mb-4">
+              <h5 class="card-title mb-3 text-primary-custom">
+                <i class="fa-solid fa-map-marker-alt me-2"></i>お住まいの都道府県
+              </h5>
+              <form method="post" class="mb-0">
+                {% csrf_token %}
+                <div class="row align-items-center">
+                  <div class="col-md-8 mb-3">
+                    {{ profile_form.prefecture }}
+                    {% if profile_form.prefecture.errors %}
+                      <div class="text-danger mt-2 small">{{ profile_form.prefecture.errors }}</div>
+                    {% endif %}
+                  </div>
+                  <div class="col-md-4 sp">
+                    <button type="submit" class="btn btn-primary-custom">保存</button>
+                  </div>
                 </div>
-                
-                <div class="card-body p-4">
-                    <div class="mb-5">
-                        <h5 class="card-title mb-3 text-primary-custom">
-                            <i class="fa-solid fa-plus-circle me-2"></i>新しいキーワードを追加
-                        </h5>
-                        <form method="post">
-                            {% csrf_token %}
-                            <div class="input-group input-group-lg">
-                                {{ form.word }} 
-                                <button type="submit" class="btn btn-primary-custom px-4">登録</button>
-                            </div>
-                            {% if form.word.errors %}
-                                <div class="text-danger mt-2 small">
-                                    {{ form.word.errors }}
-                                </div>
-                            {% endif %}
-                        </form>
-                    </div>
-
-                    <hr class="my-4" style="border-color: #e2e8f0;">
-
-                    <div>
-                        <h5 class="card-title mb-3 text-primary-custom">
-                            <i class="fa-solid fa-list me-2"></i>現在の登録キーワード
-                        </h5>
-                        
-                        {% if keywords %}
-                            <div class="table-responsive">
-                                <table class="table table-hover align-middle">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th style="width: 50%;">キーワード</th>
-                                            <th>登録日時</th>
-                                            <th class="text-center">操作</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {% for k in keywords %}
-                                        <tr>
-                                            <td>
-                                                <span class="badge bg-light text-dark border p-2 fw-normal">
-                                                    # {{ k.word }}
-                                                </span>
-                                            </td>
-                                            <td class="small text-muted">{{ k.registered_at|date:"n/j H:i" }}</td>
-                                            <td class="text-center">
-                                                <a href="{% url 'news_collector:delete_keyword' k.pk %}" 
-                                                   class="text-danger text-decoration-none small"
-                                                   onclick="return confirm('「{{ k.word }}」を削除してよろしいですか？')">
-                                                    <i class="fa-solid fa-trash me-1"></i> 削除
-                                                </a>
-                                            </td>
-                                        </tr>
-                                        {% endfor %}
-                                    </tbody>
-                                </table>
-                            </div>
-                        {% else %}
-                            <div class="text-center py-4 bg-light rounded">
-                                <p class="text-muted mb-0">現在登録されているキーワードはありません。</p>
-                            </div>
-                        {% endif %}
-                    </div>
+              </form>
+              {% if current_prefecture %}
+                <div class="mt-2">
+                  <small class="text-muted">現在の設定: {{ current_prefecture }}</small>
                 </div>
-
-                <div class="card-footer bg-white border-top-0 text-center py-4">
-                    <a href="{% url 'news_collector:index' %}" class="btn btn-outline-secondary btn-sm">
-                        <i class="fa-solid fa-arrow-left me-1"></i> トップページへ戻る
-                    </a>
-                </div>
+              {% endif %}
             </div>
+            <hr class="my-4" style="border-color: #e2e8f0" />
+            <div class="mb-5">
+              <h5 class="card-title mb-3 text-primary-custom">
+                <i class="fa-solid fa-plus-circle me-2"></i>新しいキーワードを追加
+              </h5>
+              <form method="post">
+                {% csrf_token %}
+                <div class="d-flex gap-3">
+                  {{ keyword_form.word }}
+                  <button type="submit" class="btn btn-primary-custom">登録</button>
+                </div>
+                {% if keyword_form.word.errors %}<div class="text-danger mt-2 small">{{ keyword_form.word.errors }}</div>{% endif %}
+              </form>
+            </div>
+            <hr class="my-4" style="border-color: #e2e8f0" />
+            <div>
+              <h5 class="card-title mb-3 text-primary-custom">
+                <i class="fa-solid fa-list me-2"></i>現在の登録キーワード
+              </h5>
+              {% if keywords %}
+                <div class="table-responsive">
+                  <table class="table align-middle">
+                    <thead class="table-light">
+                      <tr>
+                        <th style="width: 50%">キーワード</th>
+                        <th>登録日時</th>
+                        <th class="text-center">操作</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for k in keywords %}
+                        <tr>
+                          <td>
+                            <span class="badge bg-light text-dark border p-2 fw-normal"># {{ k.word }}</span>
+                          </td>
+                          <td class="small text-muted">{{ k.registered_at|date:"n/j H:i" }}</td>
+                          <td class="text-center">
+                            <a href="{% url 'news_collector:delete_keyword' k.pk %}"
+                               class="text-decoration-none small d-inline-block"
+                               onclick="return confirm('「{{ k.word }}」を削除してよろしいですか？')">
+                              <span class="badge text-danger border p-2 fw-normal">
+                                <i class="fa-solid fa-trash me-1"></i> 削除
+                              </span>
+                            </a>
+                          </td>
+                        </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              {% else %}
+                <div class="text-center py-4 bg-light rounded">
+                  <p class="text-muted mb-0">現在登録されているキーワードはありません。</p>
+                </div>
+              {% endif %}
+            </div>
+          </div>
+          <div class="card-footer bg-white border-top-0 text-center py-4">
+            <a href="{% url 'news_collector:index' %}"
+               class="btn btn-outline-secondary btn-sm">
+              <i class="fa-solid fa-arrow-left me-1"></i> トップページへ戻る
+            </a>
+          </div>
         </div>
+      </div>
     </div>
-</div>
+  </div>
 {% endblock %}

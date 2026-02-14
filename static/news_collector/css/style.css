@@ -27,6 +27,18 @@ header {
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
 }
 
+#base-page header .container-fluid{
+    padding-left: 4rem !important;
+    padding-right: 4rem !important;
+}
+
+@media (max-width: 768px) {
+    #base-page header .container-fluid{
+        padding-left: 1.5rem !important;
+        padding-right: 1.5rem !important;
+    }
+}
+
 .navbar-brand {
     font-weight: 700;
     color: #1173d4 !important;
@@ -208,8 +220,8 @@ footer {
     border-right: 33px solid white;
 }
 
-@media (max-width: 767.98px) {
-    .sp{
+@media (max-width: 768px) {
+    #index-page.sp{
         justify-content: center;
     }
 
@@ -219,7 +231,7 @@ footer {
         box-sizing: border-box;
         margin: 10px 0;
     }
- 
+
     .bubble-tail-left,
     .bubble-tail-left::after {
         display: none; /* スマホではしっぽを非表示に */
@@ -293,4 +305,25 @@ footer {
         transform: none;
         margin-top: 1rem;
     }
+}
+
+
+/* ========================================
+   マイスページ用スタイル
+   ======================================== */
+@media (max-width: 768px) {
+    #my-page .sp{
+        text-align: center;
+    }
+}
+
+/* 削除ボタンのhover効果 */
+#my-page .badge.text-danger:hover {
+    background-color: #6c757d;
+    color: white;
+    border-color: #6c757d;
+}
+
+.form-control{
+    font-size: 1rem;
 }
