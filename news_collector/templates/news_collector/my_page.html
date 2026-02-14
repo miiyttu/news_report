@@ -16,6 +16,7 @@
               </h5>
               <form method="post" class="mb-0">
                 {% csrf_token %}
+                <input type="hidden" name="form_type" value="prefecture">
                 <div class="row align-items-center">
                   <div class="col-md-8 mb-3">
                     {{ profile_form.prefecture }}
@@ -33,6 +34,51 @@
                   <small class="text-muted">現在の設定: {{ current_prefecture }}</small>
                 </div>
               {% endif %}
+            </div>
+            <!-- LINE通知設定 -->
+            <div class="mb-4">
+              <h5 class="card-title mb-3 text-primary-custom">
+                <i class="fa-solid fa-bell me-2"></i>LINE通知設定
+              </h5>
+              <form method="post" id="line-form">
+                {% csrf_token %}
+                <input type="hidden" name="form_type" value="line">
+                <div class="form-check form-switch mb-3">
+                  {{ profile_form.is_line_subscribed }}
+                  <label class="form-check-label" for="id_is_line_subscribed">LINEで毎朝8時に通知を受け取る</label>
+                </div>
+                {% if is_line_linked %}
+                  <div class="alert alert-success" role="alert">
+                    <i class="fa-solid fa-check-circle me-2"></i>
+                    LINE連携が完了しています
+                  </div>
+                {% endif %}
+                <div id="line-setup-guide" class="card border-info" style="display: none;">
+                  <div class="card-body">
+                    <h6 class="card-title text-info">LINE連携の手順</h6>
+                    <p class="mb-2">1. 以下のQRコードから友だち登録してください。</p>
+                    <div class="text-center mb-3">
+                      <img src="{% static 'images/line_qr.png' %}"
+                           width="150"
+                           height="150"
+                           alt="LINE QRコード">
+                    </div>
+                    <p class="mb-2">
+                      2. 下のメッセージを<strong>コピーしてそのまま</strong>LINEボットに送信してください：
+                    </p>
+                    <div class="bg-light p-3 border rounded text-center mb-2 shadow-sm">
+                      <code class="text-dark" style="font-size: 1.1rem; font-family: sans-serif;">
+                        ユーザー名【{{ request.user.username }}】でLINEと連携します
+                      </code>
+                    </div>
+                    <p class="text-muted small mt-2 text-center">
+                      <i class="fa-solid fa-circle-info me-1"></i>
+                      【 】も含めて、表示されている通りに送信してください。
+                    </p>
+                  </div>
+                </div>
+                <button type="submit" class="btn btn-primary-custom mt-3">設定を保存</button>
+              </form>
             </div>
             <hr class="my-4" style="border-color: #e2e8f0" />
             <div class="mb-5">
@@ -101,4 +147,27 @@
       </div>
     </div>
   </div>
+  <script>
+  const subscribeCheckbox = document.getElementById('is_line_subscribed');
+  const lineGuide = document.getElementById('line-setup-guide');
+
+  function toggleGuide() {
+    if (lineGuide && subscribeCheckbox) {
+      // スイッチの状態に合わせて表示を切り替えるだけにする
+      if (subscribeCheckbox.checked) {
+        lineGuide.style.display = 'block';
+      } else {
+        lineGuide.style.display = 'none';
+      }
+    }
+  }
+
+  if (subscribeCheckbox) {
+    // スイッチを切り替えた瞬間に実行
+    subscribeCheckbox.addEventListener('change', toggleGuide);
+    
+    // ページ読み込み時にも実行（現在のスイッチの状態を反映）
+    toggleGuide();
+  }
+  </script>
 {% endblock %}

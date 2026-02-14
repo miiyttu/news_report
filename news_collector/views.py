@@ -1,10 +1,17 @@
+import os
+import re
+from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import render, redirect
 from django.utils import timezone
 from django.views.generic import DetailView, CreateView
+from django.views.decorators.csrf import csrf_exempt
 from django.urls import reverse_lazy
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import get_user_model
 from django.contrib.auth import logout
+from linebot.exceptions import InvalidSignatureError
+from linebot.models import MessageEvent, TextMessage, TextSendMessage
+from linebot import LineBotApi, WebhookHandler
 from .models import ArticleModel, UserKeyword, UserProfile
 from .forms import UserKeywordForm, CustomUserCreationForm, UserProfileForm
 from .services import (
@@ -99,44 +106,45 @@ class UserCreationView(CreateView):
 
 @login_required
 def my_page(request):
-    # ユーザープロフィールを取得
     profile, created = UserProfile.objects.get_or_create(user=request.user)
 
-    # 1. 都道府県フォームの処理
-    if request.method == "POST" and "prefecture" in request.POST:
-        profile_form = UserProfileForm(request.POST, instance=profile)
-        if profile_form.is_valid():
-            profile_form.save()
-            return redirect("news_collector:my_page")
+    if request.method == "POST":
+        form_type = request.POST.get("form_type")
 
-    # 2. キーワードフォームの処理
-    if request.method == "POST" and "word" in request.POST:
-        keyword_form = UserKeywordForm(request.POST)
-        if keyword_form.is_valid():
-            keyword = keyword_form.save(commit=False)
-            keyword.user = request.user
-            keyword.save()
-            return redirect("news_collector:my_page")
+        # 都道府県フォーム または LINE通知フォーム の保存処理
+        if form_type in ["prefecture", "line"]:
+            profile_form = UserProfileForm(request.POST, instance=profile)
+            if profile_form.is_valid():  # ここを is_valid() に修正
+                profile_form.save()
+                return redirect("news_collector:my_page")
 
-    # 3. 普通にページを開いた時（GET）や、保存が終わった後の処理
+        # キーワードフォームの保存処理
+        if "word" in request.POST:
+            keyword_form = UserKeywordForm(request.POST)
+            if keyword_form.is_valid():
+                keyword = keyword_form.save(commit=False)
+                keyword.user = request.user
+                keyword.save()
+                return redirect("news_collector:my_page")
+
+    # 画面表示用のデータ準備
     profile_form = UserProfileForm(instance=profile)
     keyword_form = UserKeywordForm()
-
-    # 4. 画面に渡すデータをまとめる
     keyword_list = request.user.keywords.all()
 
-    # 都道府県名を日本語で取得
-    current_prefecture_name = None
-    if profile.prefecture:
-        current_prefecture_name = PREFECTURE_NAMES.get(
-            profile.prefecture, profile.prefecture
-        )
+    current_prefecture_name = (
+        PREFECTURE_NAMES.get(profile.prefecture, profile.prefecture)
+        if profile.prefecture
+        else None
+    )
 
     context = {
         "keywords": keyword_list,
         "keyword_form": keyword_form,
         "profile_form": profile_form,
         "current_prefecture": current_prefecture_name,
+        "is_line_subscribed": profile.is_line_subscribed,  # これでDBの最新値が渡る
+        "is_line_linked": bool(profile.line_user_id),
     }
     return render(request, "news_collector/my_page.html", context)
 
@@ -154,3 +162,54 @@ def delete_keyword(request, pk):
 def custom_logout(request):
     logout(request)
     return render(request, "registration/logout.html")
+
+
+# LINE Botの設定（.env から読み込み）
+line_bot_api = LineBotApi(os.environ.get("LINE_CHANNEL_ACCESS_TOKEN"))
+handler = WebhookHandler(os.environ.get("LINE_CHANNEL_SECRET"))
+
+
+@csrf_exempt
+def callback(request):
+    """LINEからのメッセージを受け取る窓口"""
+    signature = request.META.get("HTTP_X_LINE_SIGNATURE", "")
+    body = request.body.decode("utf-8")
+
+    try:
+        handler.handle(body, signature)
+    except InvalidSignatureError:
+        return HttpResponseForbidden()
+
+    return HttpResponse("OK")
+
+
+@handler.add(MessageEvent, message=TextMessage)
+def handle_message(event):
+    """LINEメッセージの内容を解析して連携する"""
+    text = event.message.text
+    line_user_id = event.source.user_id  # LINEのユーザー固有ID
+
+    # ユーザーが送ってきた文章に【ユーザー名】が含まれているかチェック
+    match = re.search(r"ユーザー名【(.+)】でLINEと連携します", text)
+
+    if match:
+        username = match.group(1)
+        User = get_user_model()
+
+        try:
+            # 1. ユーザーを探す
+            user = User.objects.get(username=username)
+            # 2. プロフィールにLINE IDを保存する
+            profile, created = UserProfile.objects.get_or_create(user=user)
+            profile.line_user_id = line_user_id
+            profile.save()
+
+            reply_text = f"【連携成功】\n{user.username}さん、こんにちは！LINE連携が完了しました。これからニュースをお届けします。"
+        except User.DoesNotExist:
+            reply_text = f"エラー：ユーザー「{username}」が見つかりませんでした。サイトのユーザー名を正しく入力してください。"
+    else:
+        # 指定の文章以外が送られてきた場合
+        reply_text = "連携するには、マイページに表示されている文章をそのままコピーして送ってくださいね！"
+
+    # LINEに応答を返す
+    line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_text))

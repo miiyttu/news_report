@@ -71,6 +71,20 @@ class UserProfile(models.Model):
         null=True,
         help_text="お住まいの都道府県を選択してください",
     )
+    is_line_subscribed = models.BooleanField(
+        "LINE通知を希望する",
+        default=False,
+        help_text="チェックを入れると、選択した都道府県のニュースをLINEでお届けします",
+    )
+
+    line_user_id = models.CharField(
+        "LINEユーザーID",
+        max_length=100,
+        blank=True,
+        null=True,
+        help_text="LINEとの連携に使用します。自動で設定されるので入力不要です",
+    )
+
     created_at = models.DateTimeField("作成日時", default=timezone.now)
     updated_at = models.DateTimeField("更新日時", auto_now=True)
 
