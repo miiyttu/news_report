@@ -11,6 +11,15 @@ body {
     background-color: #f5f6f7;
 }
 
+@media (max-width: 768px) {
+    body {
+        font-size: 0.875rem; /* 14px */
+    }
+    h1, h2, h3, h4, h6 {
+        font-size: 0.9em;
+    }
+}
+
 /* ヘッダー */
 header {
     background-color: white;
@@ -19,9 +28,6 @@ header {
 }
 
 .header-sticky {
-    position: sticky;
-    top: 0;
-    z-index: 1030;
     background-color: white;
     border-bottom: 1px solid #e2e8f0;
     box-shadow: 0 1px 3px rgba(0,0,0,0.1);
@@ -71,6 +77,7 @@ header {
     gap: 0.75rem;
 }
 
+
 /* ユーザーアバター */
 .user-avatar {
     width: 40px;
@@ -92,6 +99,16 @@ header {
     color: #6c757d;
 }
 
+
+@media (max-width: 768px) {
+    .user-welcome {
+        font-size: 0.75rem;
+    }
+    
+    .nav-custom {
+        gap: 0.75rem;
+    }
+}
 /* フッター */
 footer {
     background-color: white;
@@ -133,9 +150,134 @@ footer {
     color: white;
 }
 
+@media (max-width: 768px) {
+    .btn {
+        padding: 0.375rem 0.75rem;
+        font-size: 0.8rem;
+    }
+}
+
 /* ========================================
    インデックスページ用スタイル
    ======================================== */
+
+.hero-section {
+    background: linear-gradient(135deg, #eff6ff 0%, #f8fafc 100%); /* 薄いブルーのグラデーション */
+    border: 1px solid #e2e8f0;
+    border-radius: 2rem; /* 角を丸く */
+    padding: 2rem 1rem;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+    margin-top: 2rem;
+    margin-left: 4rem;
+    margin-right: 4rem;
+}
+
+@media (max-width: 768px) {
+    .hero-section {
+        margin-left: 1.5rem;
+        margin-right: 1.5rem;
+    }
+    
+    .hero-section .container{
+        padding-left: 0 !important;
+        padding-right: 0 !important;
+        margin-left: auto;
+        margin-right: auto;
+        max-width: 100%;
+    }
+}
+
+/* --- タイトルの設定 --- */
+.hero-title {
+    font-weight: 900;
+    /* 画面幅に応じてフォントサイズを縮小させる（折り返さない工夫） */
+    font-size: clamp(1.8rem, 5vw, 3.2rem); 
+    line-height: 1.2;
+    color: #0f172a;
+    margin-bottom: 1.5rem;
+    /* 画面が狭くなっても極力1行の長さを保つ */
+    white-space: nowrap; 
+}
+
+.hero-title span {
+    color: #1173d4; /* 青色部分 */
+}
+
+/* コンテナで奥行きを出す */
+.hero-image-container {
+    perspective: 2000px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* これが「1枚目の白いカード」の本体 */
+.hero-card {
+    background-color: #ffffff !important; /* 確実に白くする */
+    padding: 20px;            /* イラストの周りの白い余白 */
+    border-radius: 20px;      /* 角丸 */
+    width: 100%;
+    max-width: 250px;         /* 1枚目のように大きく */
+    
+    /* 1枚目のデザイン通りの傾き（右が奥） */
+    transform: rotateY(-20deg) rotateX(10deg) rotateZ(-5deg);
+    
+    /* 影をしっかりつける */
+    box-shadow: 25px 30px 50px rgba(0, 0, 0, 0.12);
+}
+
+/* 中のイラストの設定 */
+.hero-card img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+/* タイトルの青色と折り返し設定（再掲） */
+.hero-title {
+    font-weight: 900;
+    font-size: clamp(1.8rem, 5vw, 3.2rem); 
+    line-height: 1.2;
+    white-space: nowrap; 
+}
+.hero-title .blue-text {
+    color: #1173d4 !important;
+}
+
+/* スマホ対応：傾きを解除 */
+@media (max-width: 768px) {
+    .hero-title { white-space: nowrap; }
+    .hero-card {
+        transform: none !important;
+        max-width: 250px;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-title {
+        font-size: clamp(1.5rem, 4vw, 2.5rem);
+    }
+    .hero-card {
+        max-width: 200px;
+        padding: 15px;
+    }
+}
+
+.hero-description {
+    font-size: 1.1rem;
+    color: #475569;
+    line-height: 1.8;
+    max-width: 750px;
+    margin: 2rem auto 2.5rem;
+    text-align: center;
+}
+
+@media (max-width: 768px) {
+    .update-controls {
+        flex-direction: column;
+        align-items: center;
+    }
+}
 
 /* タブナビゲーション */
 .nav-pills {
@@ -225,6 +367,16 @@ footer {
         justify-content: center;
     }
 
+    .nav-pills {
+        justify-content: center;
+    }
+
+    .d-flex.align-items-center.flex-wrap.sp.gap-4 {
+        justify-content: center;
+        flex-direction: column;
+        align-items: center;
+    }
+
     .tooltip-content {
         width: 100%;
         max-width: 100%;
@@ -237,7 +389,6 @@ footer {
         display: none; /* スマホではしっぽを非表示に */
     }
 }
-
 
 /* カテゴリタブ */
 .nav-tabs .nav-link {

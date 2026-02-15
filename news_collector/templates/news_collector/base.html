@@ -74,9 +74,7 @@
     </header>
     <!-- Main Content -->
     <main class="flex-grow">
-      <div class="container px-4 py-5">
-        {% block content %}{% endblock %}
-      </div>
+      {% block content %}{% endblock %}
     </main>
     <!-- Footer -->
     <footer class="footer">
@@ -84,7 +82,7 @@
         <div class="row">
           <div class="col-md-6 mb-4 mb-md-0">
             <div class="d-flex align-items-center gap-2 mb-2">
-              <span class="material-symbols-outlined text-primary-custom">article</span>
+              <img src="{% static 'images/logo.svg' %}" alt="Logo" style="height:60px">
               <h5 class="mb-0 fw-bold text-primary-custom">News Report App</h5>
             </div>
             <p class="text-muted small text-start">あなた専用のニュース集約アプリ</p>

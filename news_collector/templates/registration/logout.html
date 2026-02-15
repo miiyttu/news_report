@@ -1,39 +1,32 @@
 {% extends 'news_collector/base.html' %}
 {% load static %}
 {% block title %}ログアウト{% endblock %}
-
 {% block content %}
-<div class="container mt-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
-                    <h4 class="mb-0">ログアウト</h4>
-                </div>
-                <div class="card-body p-4 text-center">
-                    <div class="mb-4">
-                        <div class="text-success mb-3">
-                            <i class="fa-solid fa-circle-check fa-3x"></i>
-                        </div>
-                        <h5 class="text-success">ログアウトしました</h5>
-                        <p class="text-muted mb-0">
-                            またのご利用をお待ちしております
-                        </p>
+    <div class="container mt-5 mb-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="mb-0">ログアウト</h4>
                     </div>
-                    
-                    <hr class="my-4">
-                    
-                    <div class="d-flex gap-3 justify-content-center">
-                        <a href="{% url 'news_collector:login' %}" class="btn btn-primary-custom">
-                            ログインする
-                        </a>
-                        <a href="{% url 'news_collector:index' %}" class="btn btn-outline-secondary">
-                            トップページ
-                        </a>
+                    <div class="card-body p-4 text-center">
+                        <div class="mb-4">
+                            <div class="text-success mb-3">
+                                <i class="fa-solid fa-circle-check fa-3x"></i>
+                            </div>
+                            <h5 class="text-success">ログアウトしました</h5>
+                            <p class="text-muted mb-0">またのご利用をお待ちしております</p>
+                        </div>
+                        <hr class="my-4">
+                        <div class="d-flex gap-3 justify-content-center">
+                            <a href="{% url 'news_collector:login' %}"
+                               class="btn btn-primary-custom">ログインする</a>
+                            <a href="{% url 'news_collector:index' %}"
+                               class="btn btn-outline-secondary">トップページ</a>
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
-</div>
 {% endblock %}
