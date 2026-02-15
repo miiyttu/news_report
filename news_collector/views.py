@@ -112,11 +112,16 @@ def my_page(request):
         form_type = request.POST.get("form_type")
 
         # 都道府県フォーム または LINE通知フォーム の保存処理
-        if form_type in ["prefecture", "line"]:
-            profile_form = UserProfileForm(request.POST, instance=profile)
-            if profile_form.is_valid():  # ここを is_valid() に修正
-                profile_form.save()
-                return redirect("news_collector:my_page")
+        if form_type == "prefecture":
+            new_prefecture = request.POST.get("prefecture")
+            if new_prefecture:
+                profile.prefecture = new_prefecture
+                profile.save(update_fields=["prefecture"])
+            return redirect("news_collector:my_page")
+        elif form_type == "line":
+            profile.is_line_subscribed = "is_line_subscribed" in request.POST
+            profile.save(update_fields=["is_line_subscribed"])
+            return redirect("news_collector:my_page")
 
         # キーワードフォームの保存処理
         if "word" in request.POST:
@@ -193,23 +198,27 @@ def handle_message(event):
     match = re.search(r"ユーザー名(.+)でLINEと連携", text)
 
     if match:
-        username = match.group(1)
+        username = match.group(1).strip()
         User = get_user_model()
 
         try:
             # 1. ユーザーを探す
-            user = User.objects.get(username=username)
+            user = User.objects.get(username__iexact=username)
             # 2. プロフィールにLINE IDを保存する
             profile, created = UserProfile.objects.get_or_create(user=user)
             profile.line_user_id = line_user_id
             profile.save()
 
             reply_text = f"【連携成功】\n{user.username}さん、こんにちは！LINE連携が完了しました。これからニュースをお届けします。"
+            print(f"DEBUG: {user.username} の連携に成功しました (ID: {line_user_id})")
         except User.DoesNotExist:
-            reply_text = f"エラー：ユーザー「{username}」が見つかりませんでした。サイトのユーザー名を正しく入力してください。"
+            all_users = list(User.objects.values_list("username", flat=True))
+            print(f"DEBUG: 検索した名前: '{username}'")
+            print(f"DEBUG: 存在するユーザー一覧: {all_users}")
+            reply_text = f"エラー：ユーザー「{username}」が見つかりませんでした。"
     else:
         # 指定の文章以外が送られてきた場合
-        reply_text = "連携するには、マイページに表示されている文章をそのままコピーして送ってくださいね！"
+        reply_text = "連携メッセージの形式が正しくありません。"
 
     # LINEに応答を返す
     line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_text))

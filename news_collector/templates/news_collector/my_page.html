@@ -77,7 +77,6 @@
                     </p>
                   </div>
                 </div>
-                <button type="submit" class="btn btn-primary-custom mt-3">設定を保存</button>
               </form>
             </div>
             <hr class="my-4" style="border-color: #e2e8f0" />
@@ -149,22 +148,21 @@
   </div>
   <script>
   const subscribeCheckbox = document.getElementById('is_line_subscribed');
+  const lineForm = document.getElementById('line-form');
   const lineGuide = document.getElementById('line-setup-guide');
 
   function toggleGuide() {
     if (lineGuide && subscribeCheckbox) {
-      // スイッチの状態に合わせて表示を切り替えるだけにする
-      if (subscribeCheckbox.checked) {
-        lineGuide.style.display = 'block';
-      } else {
-        lineGuide.style.display = 'none';
+      lineGuide.style.display = subscribeCheckbox.checked ? 'block' : 'none';
       }
     }
-  }
-
+  
   if (subscribeCheckbox) {
     // スイッチを切り替えた瞬間に実行
-    subscribeCheckbox.addEventListener('change', toggleGuide);
+    subscribeCheckbox.addEventListener('change', function() {
+      toggleGuide();
+      lineForm.submit();
+    });
     
     // ページ読み込み時にも実行（現在のスイッチの状態を反映）
     toggleGuide();

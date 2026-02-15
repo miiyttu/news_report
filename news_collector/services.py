@@ -274,10 +274,6 @@ line_bot_api = LineBotApi(LINE_CHANNEL_ACCESS_TOKEN)
 
 
 def send_line_news_notification(user, articles, title_text):
-    """取得した記事を、そのユーザーのLINE IDに送信する"""
-    if not LINE_CHANNEL_ACCESS_TOKEN:
-        print("LINE_CHANNEL_ACCESS_TOKEN が設定されていません")
-        return
 
     # 環境変数からではなく、引数で渡された user のプロフィールから ID を取得する
     profile = getattr(user, "profile", None)
@@ -307,9 +303,21 @@ line_bot_api = LineBotApi(LINE_CHANNEL_ACCESS_TOKEN)
 
 
 def send_line_news_notification(user, articles, title_text):
-    """取得した記事をLINEに送信する"""
-    if not LINE_CHANNEL_ACCESS_TOKEN or not LINE_USER_ID:
-        print("LINE設定が足りないため送信をスキップします")
+    """取得した記事を、そのユーザーのLINE IDに送信する"""
+
+    # LINE_CHANNEL_ACCESS_TOKEN（ボット自身の鍵）さえあればOKにする
+    if not LINE_CHANNEL_ACCESS_TOKEN:
+        print("LINE_CHANNEL_ACCESS_TOKEN が設定されていません")
+        return
+
+    # ユーザーのプロフィールから ID を取得
+    profile = getattr(user, "profile", None)
+    line_user_id = profile.line_user_id if profile else None
+
+    if not line_user_id:
+        print(
+            f"ユーザー {user.username} の LINE ID が登録されていないためスキップします"
+        )
         return
 
     message = f"{title_text}\n\n"

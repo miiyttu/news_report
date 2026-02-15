@@ -1,5 +1,5 @@
 from pathlib import Path
-import os 
+import os
 import dj_database_url
 from dotenv import load_dotenv
 
@@ -36,10 +36,10 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "django_apscheduler",
-    'news_collector',
+    "news_collector",
 ]
 
-DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -61,8 +61,8 @@ TEMPLATES = [
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
-                'django.template.context_processors.request',
-                'news_collector.context_processors.latest_news_time',
+                "django.template.context_processors.request",
+                "news_collector.context_processors.latest_news_time",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
             ],
@@ -78,17 +78,17 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 DATABASES = {
     "default": {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': os.getenv("DB_NAME"),
-        'USER': os.getenv("DB_USER"),
-        'PASSWORD': os.getenv("DB_PASSWORD"),
-        'HOST': os.getenv("DB_HOST"),
-        'PORT': os.getenv("DB_PORT"),
+        "ENGINE": "django.db.backends.postgresql",
+        "NAME": os.getenv("DB_NAME"),
+        "USER": os.getenv("DB_USER"),
+        "PASSWORD": os.getenv("DB_PASSWORD"),
+        "HOST": os.getenv("DB_HOST"),
+        "PORT": os.getenv("DB_PORT"),
     }
 }
 
 db_from_env = dj_database_url.config(conn_max_age=600)
-DATABASES['default'].update(db_from_env)
+DATABASES["default"].update(db_from_env)
 
 
 # Password validation
@@ -130,14 +130,14 @@ STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 # settings.py に追加
-LOGIN_REDIRECT_URL = 'news_collector:index'  # ログイン後のリダイレクト先
-LOGOUT_REDIRECT_URL = 'news_collector:index'  # ログアウト後のリダイレクト先
-AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.ModelBackend']
+LOGIN_REDIRECT_URL = "news_collector:index"  # ログイン後のリダイレクト先
+LOGOUT_REDIRECT_URL = "news_collector:index"  # ログアウト後のリダイレクト先
+AUTHENTICATION_BACKENDS = ["django.contrib.auth.backends.ModelBackend"]
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-        'OPTIONS': {
-            'min_length': 4,  
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
+        "OPTIONS": {
+            "min_length": 4,
         },
     },
 ]
@@ -152,7 +152,8 @@ if not DEBUG:
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
-    
+    CSRF_TRUSTED_ORIGINS = ["https://news-report-app-ec1c57c2f618.herokuapp.com"]
+
     # 2. HSTS設定
     SECURE_HSTS_SECONDS = 31536000  # 1年
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
