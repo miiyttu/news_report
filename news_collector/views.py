@@ -190,7 +190,7 @@ def handle_message(event):
     line_user_id = event.source.user_id  # LINEのユーザー固有ID
 
     # ユーザーが送ってきた文章に【ユーザー名】が含まれているかチェック
-    match = re.search(r"ユーザー名【(.+)】でLINEと連携します", text)
+    match = re.search(r"ユーザー名(.+)でLINEと連携", text)
 
     if match:
         username = match.group(1)

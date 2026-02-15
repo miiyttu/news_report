@@ -17,6 +17,7 @@
           rel="stylesheet" />
     <!-- Custom CSS -->
     <link href="{% static 'news_collector/css/style.css' %}" rel="stylesheet" />
+    <link rel="icon" type="image/svg+xml" href="{% static 'images/logo.svg' %}">
   </head>
   <body id="base-page">
     <!-- Header -->
@@ -25,10 +26,13 @@
         <div class="row align-items-center py-3">
           <div class="col-auto">
             <div class="d-flex align-items-center gap-2">
-              <div class="bg-primary-custom text-white p-2 rounded">
-                <span class="material-symbols-outlined">article</span>
+              <div class="d-flex align-items-center gap-2">
+                <a href="{% url 'news_collector:index' %}"
+                   class="d-flex align-items-center gap-2 text-decoration-none">
+                  <img src="{% static 'images/logo.svg' %}" alt="Logo" style="height:60px">
+                  <h1 class="h4 mb-0 fw-bold text-primary-custom">News Report App</h1>
+                </a>
               </div>
-              <h1 class="h4 mb-0 fw-bold text-primary-custom">News Report App</h1>
             </div>
           </div>
           <div class="col">

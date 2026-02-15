@@ -1,6 +1,7 @@
 from django.core.management.base import BaseCommand
 from django.contrib.auth import get_user_model
 from news_collector.models import ArticleModel
+from news_collector.services import fetch_prefecture_news, fetch_user_keywords_news
 import logging
 
 logger = logging.getLogger(__name__)
@@ -17,6 +18,11 @@ class Command(BaseCommand):
         users = User.objects.all()
 
         for user in users:
+
+            self.stdout.write(f"--- {user.username}の最新ニュースを取得中 ---")
+            fetch_user_keywords_news(user)
+            fetch_prefecture_news(user)
+
             # ユーザーのプロフィール（都道府県）を取得
             # models.py の related_name="profile" に合わせる
             profile = getattr(user, "profile", None)

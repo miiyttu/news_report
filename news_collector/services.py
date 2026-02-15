@@ -273,28 +273,32 @@ LINE_CHANNEL_ACCESS_TOKEN = os.getenv("LINE_CHANNEL_ACCESS_TOKEN")
 line_bot_api = LineBotApi(LINE_CHANNEL_ACCESS_TOKEN)
 
 
-def send_line_news_notification(user, articles, title_text="【新着ニュース】"):
-    """
-    指定されたユーザーにニュースをLINEで送信する
-    """
-    # LINE_USER_IDが登録されていない場合はスキップ
-    # (将来的にユーザーモデルにLINE IDを保存する想定)
-    line_user_id = os.getenv("LINE_USER_ID")
-    if not line_user_id or not articles:
+def send_line_news_notification(user, articles, title_text):
+    """取得した記事を、そのユーザーのLINE IDに送信する"""
+    if not LINE_CHANNEL_ACCESS_TOKEN:
+        print("LINE_CHANNEL_ACCESS_TOKEN が設定されていません")
         return
 
-    # メッセージの組み立て（まずはシンプルなテキスト形式）
-    message_content = f"{title_text}\n\n"
-    for article in articles[:5]:  # 送りすぎ防止のため最大5件
-        message_content += f"・{article.title}\n{article.url}\n\n"
+    # 環境変数からではなく、引数で渡された user のプロフィールから ID を取得する
+    profile = getattr(user, "profile", None)
+    line_user_id = profile.line_user_id if profile else None
+
+    if not line_user_id:
+        print(
+            f"ユーザー {user.username} の LINE ID が登録されていないためスキップします"
+        )
+        return
+
+    message = f"{title_text}\n\n"
+    for article in articles:
+        message += f"■{article.title_jp}\n{article.url}\n\n"
 
     try:
-        line_bot_api.push_message(
-            line_user_id, TextSendMessage(text=message_content.strip())
-        )
-        print(f"LINE送信成功: {user.username}")
+        # 取得した line_user_id 宛に送信
+        line_bot_api.push_message(line_user_id, TextSendMessage(text=message.strip()))
+        print(f"LINE送信成功: {user.username} ({line_user_id})")
     except LineBotApiError as e:
-        print(f"LINE送信エラー: {e}")
+        print(f"LINE送信エラー ({user.username}): {e}")
 
 
 LINE_CHANNEL_ACCESS_TOKEN = os.getenv("LINE_CHANNEL_ACCESS_TOKEN")
