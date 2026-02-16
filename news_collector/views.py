@@ -191,6 +191,7 @@ def callback(request):
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     """LINEメッセージの内容を解析して連携する"""
+    print(f"DEBUG: CURRENT_USER_ID_FROM_LINE = {event.source.user_id}", flush=True)
     text = event.message.text
     line_user_id = event.source.user_id  # LINEのユーザー固有ID
 
@@ -211,8 +212,7 @@ def handle_message(event):
 
             reply_text = f"【連携成功】\n{user.username}さん、こんにちは！LINE連携が完了しました。これからニュースをお届けします。"
             print(f"DEBUG: {user.username} の連携に成功しました (ID: {line_user_id})")
-            # 連携メッセージを処理している部分
-            print(f"DEBUG: CURRENT_USER_ID_FROM_LINE = {event.source.user_id}")
+
         except User.DoesNotExist:
             all_users = list(User.objects.values_list("username", flat=True))
             print(f"DEBUG: 検索した名前: '{username}'")
