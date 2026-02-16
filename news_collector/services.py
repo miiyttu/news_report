@@ -274,43 +274,13 @@ line_bot_api = LineBotApi(LINE_CHANNEL_ACCESS_TOKEN)
 
 
 def send_line_news_notification(user, articles, title_text):
-
-    # 環境変数からではなく、引数で渡された user のプロフィールから ID を取得する
-    profile = getattr(user, "profile", None)
-    line_user_id = profile.line_user_id if profile else None
-
-    if not line_user_id:
-        print(
-            f"ユーザー {user.username} の LINE ID が登録されていないためスキップします"
-        )
-        return
-
-    message = f"{title_text}\n\n"
-    for article in articles:
-        message += f"■{article.title_jp}\n{article.url}\n\n"
-
-    try:
-        # 取得した line_user_id 宛に送信
-        line_bot_api.push_message(line_user_id, TextSendMessage(text=message.strip()))
-        print(f"LINE送信成功: {user.username} ({line_user_id})")
-    except LineBotApiError as e:
-        print(f"LINE送信エラー ({user.username}): {e}")
-
-
-LINE_CHANNEL_ACCESS_TOKEN = os.getenv("LINE_CHANNEL_ACCESS_TOKEN")
-LINE_USER_ID = os.getenv("LINE_USER_ID")
-line_bot_api = LineBotApi(LINE_CHANNEL_ACCESS_TOKEN)
-
-
-def send_line_news_notification(user, articles, title_text):
     """取得した記事を、そのユーザーのLINE IDに送信する"""
 
-    # LINE_CHANNEL_ACCESS_TOKEN（ボット自身の鍵）さえあればOKにする
     if not LINE_CHANNEL_ACCESS_TOKEN:
         print("LINE_CHANNEL_ACCESS_TOKEN が設定されていません")
         return
 
-    # ユーザーのプロフィールから ID を取得
+    # 1. ユーザーのプロフィールから ID を正しく取得
     profile = getattr(user, "profile", None)
     line_user_id = profile.line_user_id if profile else None
 
@@ -322,10 +292,11 @@ def send_line_news_notification(user, articles, title_text):
 
     message = f"{title_text}\n\n"
     for article in articles:
-        # 'title' ではなく 'title_jp' に修正
         message += f"■{article.title_jp}\n{article.url}\n\n"
 
     try:
-        line_bot_api.push_message(LINE_USER_ID, TextSendMessage(text=message.strip()))
+        # 2. 【修正箇所】LINE_USER_ID ではなく line_user_id を使う
+        line_bot_api.push_message(line_user_id, TextSendMessage(text=message.strip()))
+        print(f"DEBUG: {user.username}宛に送信成功")  # ログで確認できるように追加
     except LineBotApiError as e:
-        print(f"LINE送信エラー: {e}")
+        print(f"LINE送信エラー ({user.username}): {e}")
