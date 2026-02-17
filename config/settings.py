@@ -129,9 +129,9 @@ STATIC_URL = "/static/"
 STATICFILES_DIRS = [os.path.join(BASE_DIR, "static")]
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
-# settings.py に追加
-LOGIN_REDIRECT_URL = "news_collector:index"  # ログイン後のリダイレクト先
-LOGOUT_REDIRECT_URL = "news_collector:index"  # ログアウト後のリダイレクト先
+
+LOGIN_REDIRECT_URL = "news_collector:index"
+LOGOUT_REDIRECT_URL = "news_collector:index"
 AUTHENTICATION_BACKENDS = ["django.contrib.auth.backends.ModelBackend"]
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -148,17 +148,14 @@ STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # --- デプロイ用のセキュリティ設定 ---
 if not DEBUG:
-    # 1. SSL/HTTPS設定（本番では必須）
     SECURE_SSL_REDIRECT = True
     SESSION_COOKIE_SECURE = True
     CSRF_COOKIE_SECURE = True
     CSRF_TRUSTED_ORIGINS = ["https://news-report-app-ec1c57c2f618.herokuapp.com"]
 
-    # 2. HSTS設定
-    SECURE_HSTS_SECONDS = 31536000  # 1年
+    SECURE_HSTS_SECONDS = 31536000
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
 
-    # 3. その他
     SECURE_BROWSER_XSS_FILTER = True
     SECURE_CONTENT_TYPE_NOSNIFF = True

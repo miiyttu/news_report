@@ -1,6 +1,6 @@
 {% extends 'news_collector/base.html' %}
 {% load static %}
-{% block title %}最新ニュース一覧{% endblock %}
+{% block title %}News Report{% endblock %}
 {% block content %}
   <div id="index-page">
     <section class="hero-section mb-5">
@@ -191,8 +191,7 @@
         <div class="text-center py-5">
           <div class="alert alert-light border">
             <p class="text-muted mb-3">マイページで住んでる都道府県を登録してください</p>
-            <a href="{% url 'news_collector:my_page' %}"
-               class="btn btn-primary btn-sm">住んでる都道府県を登録しに行く</a>
+            <a href="{% url 'news_collector:my_page' %}" class="btn">住んでる都道府県を登録しに行く</a>
           </div>
         </div>
       {% endif %}
@@ -242,8 +241,7 @@
         <div class="text-center py-5">
           <div class="alert alert-light border">
             <p class="text-muted mb-3">マイページでキーワードを登録してください</p>
-            <a href="{% url 'news_collector:my_page' %}"
-               class="btn btn-primary btn-sm">キーワードを登録しに行く</a>
+            <a href="{% url 'news_collector:my_page' %}" class="btn">キーワードを登録しに行く</a>
           </div>
         </div>
       {% endif %}
@@ -251,14 +249,12 @@
   </div>
   {% block extra_js %}
     <script>
-  // 30分ごとにページを強制リロード（キャッシュクリア付き）
   setInterval(function () {
     location.reload(true);
-  }, 1800000); // 30分 = 30 × 60 × 1000ミリ秒
+  }, 1800000);
 
-  // 5分ごとに更新時刻をチェック
   setInterval(function () {
-    fetch(location.href + "?t=" + Date.now()) // キャッシュ回避用パラメータ
+    fetch(location.href + "?t=" + Date.now())
       .then((response) => response.text())
       .then((html) => {
         const parser = new DOMParser();
@@ -273,7 +269,6 @@
         console.log("現在の時刻:", currentTime);
         console.log("新しい時刻:", newUpdateTime);
 
-        // 更新時刻が変わっていたらページをリロード
         if (newUpdateTime && currentTime && newUpdateTime !== currentTime) {
           console.log("更新を検知、リロードします");
           location.reload(true);
@@ -282,7 +277,7 @@
       .catch((error) => {
         console.log("更新チェックエラー:", error);
       });
-  }, 300000); // 5分 = 5 × 60 × 1000ミリ秒
+  }, 300000);
     </script>
   {% endblock %}
 </div>

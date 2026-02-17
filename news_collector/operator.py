@@ -12,13 +12,11 @@ def fetch_all_news_job():
     logger.info("全ニュース取得ジョブを開始します...")
 
     try:
-        # 1. 一般ニュースを取得
         from news_collector.services import fetch_all_categories
 
         fetch_all_categories()
         logger.info("一般ニュース取得完了")
 
-        # 2. 全ユーザーのキーワードニュースを取得
         User = get_user_model()
         users = User.objects.all()
 
@@ -32,7 +30,6 @@ def fetch_all_news_job():
             fetch_prefecture_news(user)
             logger.info(f"ユーザー {user.username} のキーワード・地域ニュース取得完了")
 
-        # 3. LINE通知送信
         call_command("fetch_news")
         logger.info("LINE通知送信完了")
 

@@ -7,7 +7,7 @@ from django.contrib.auth import get_user_model
 class UserKeywordForm(forms.ModelForm):
     class Meta:
         model = UserKeyword
-        fields = ["word"]  # ユーザーに入力させたい項目だけを指定
+        fields = ["word"]
         labels = {
             "word": "新しいキーワード",
         }
@@ -25,7 +25,6 @@ class CustomAuthenticationForm(AuthenticationForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        # デフォルトのエラーメッセージを空にする
         self.error_messages["invalid_login"] = ""
         self.fields["username"].label = "ユーザー名"
         self.fields["password"].label = "パスワード"
@@ -34,7 +33,6 @@ class CustomAuthenticationForm(AuthenticationForm):
         )
         self.fields["password"].help_text = "パスワードは4文字以上で入力してください"
 
-        # エラーメッセージを日本語に
         self.fields["username"].error_messages = {
             "required": "ユーザー名を入力してください。",
             "invalid": "正しいユーザー名を入力してください。",
@@ -48,7 +46,6 @@ class CustomAuthenticationForm(AuthenticationForm):
             "inactive": "このアカウントは無効です。",
         }
 
-        # Bootstrapのクラスを追加
         for field in self.fields.values():
             field.widget.attrs["class"] = "form-control"
 

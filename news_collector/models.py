@@ -12,7 +12,6 @@ class UserProfile(models.Model):
         User, on_delete=models.CASCADE, related_name="profile", verbose_name="ユーザー"
     )
 
-    # 都道府県の選択肢
     PREFECTURE_CHOICES = [
         ("hokkaido", "北海道"),
         ("aomori", "青森県"),
@@ -111,7 +110,6 @@ def save_user_profile(sender, instance, **kwargs):
 
 
 class ArticleModel(models.Model):
-    # カテゴリの選択肢
     CATEGORY_CHOICES = [
         ("business", "ビジネス"),
         ("technology", "テクノロジー"),
@@ -122,7 +120,6 @@ class ArticleModel(models.Model):
         ("prefecture", "地域ニュース"),
     ]
 
-    # 基本情報
     title_jp = models.CharField("日本語タイトル", max_length=500)
     url = models.TextField("URL", unique=True)
     source_name = models.CharField("情報源", max_length=100, blank=True)

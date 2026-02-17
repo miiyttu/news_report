@@ -11,7 +11,6 @@ from linebot import LineBotApi
 from linebot.models import TextSendMessage, FlexSendMessage
 from linebot.exceptions import LineBotApiError
 
-# 都道府県名のマッピング
 PREFECTURE_NAMES = {
     "hokkaido": "北海道",
     "aomori": "青森県",
@@ -62,7 +61,6 @@ PREFECTURE_NAMES = {
     "okinawa": "沖縄県",
 }
 
-# カテゴリごとのGoogle News RSS URL
 RSS_URLS = {
     "business": "https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGx6TVdZU0FtVnVHZ0pWVXlnQVAB?hl=ja&gl=JP&ceid=JP:ja",
     "technology": "https://news.google.com/rss/topics/CAAqJggKIiBDQkFTRWdvSUwyMHZNRGRqTVhZU0FtVnVHZ0pWVXlnQVAB?hl=ja&gl=JP&ceid=JP:ja",
@@ -129,7 +127,7 @@ def fetch_user_keywords_news(user):
             feed = feedparser.parse(search_url)
             print(f"  検索結果: {len(feed.entries)}件")
 
-            for entry in feed.entries[:15]:  # 最大15件まで処理
+            for entry in feed.entries[:15]:
                 try:
                     ArticleModel.objects.update_or_create(
                         url=entry.link,
@@ -173,7 +171,7 @@ def get_47news_latest(area):
 
         count = 0
         for article in articles:
-            if count >= 10:  # 最大10件まで取得
+            if count >= 10:
                 break
 
             title_el = article.select_one(".item_ttl")
@@ -184,11 +182,9 @@ def get_47news_latest(area):
                 link = "https://www.47news.jp" + article.get("href", "")
                 time_str = time_el.get_text(strip=True) if time_el else ""
 
-                # 日付を解析
                 published_at = timezone.now()
                 if time_str:
                     try:
-                        # 簡単な日付解析（例: "2024/2/11 15:30"）
                         if "/" in time_str and ":" in time_str:
                             date_part, time_part = time_str.split(" ")
                             month_day = date_part.split("/")
@@ -209,7 +205,6 @@ def get_47news_latest(area):
                     except:
                         pass
 
-                # 記事を保存
                 ArticleModel.objects.update_or_create(
                     url=link,
                     defaults={
@@ -242,7 +237,6 @@ def fetch_prefecture_news(user):
         prefecture_name = PREFECTURE_NAMES.get(profile.prefecture, profile.prefecture)
         print(f"\n=== {prefecture_name} のニュースを取得中（47NEWS）... ===")
 
-        # 47NEWSから取得
         get_47news_latest(profile.prefecture)
 
         print(f"\n=== {prefecture_name} のニュース取得が完了しました ===")
@@ -280,7 +274,6 @@ def send_line_news_notification(user, articles, title_text):
         print("LINE_CHANNEL_ACCESS_TOKEN が設定されていません")
         return
 
-    # 1. ユーザーのプロフィールから ID を正しく取得
     profile = getattr(user, "profile", None)
     line_user_id = profile.line_user_id if profile else None
 
@@ -295,8 +288,7 @@ def send_line_news_notification(user, articles, title_text):
         message += f"■{article.title_jp}\n{article.url}\n\n"
 
     try:
-        # 2. 【修正箇所】LINE_USER_ID ではなく line_user_id を使う
         line_bot_api.push_message(line_user_id, TextSendMessage(text=message.strip()))
-        print(f"DEBUG: {user.username}宛に送信成功")  # ログで確認できるように追加
+        print(f"DEBUG: {user.username}宛に送信成功")
     except LineBotApiError as e:
         print(f"LINE送信エラー ({user.username}): {e}")

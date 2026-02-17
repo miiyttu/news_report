@@ -34,8 +34,6 @@ def index(request):
 
     selected_cat = request.GET.get("cat", "")
 
-    # --- 1. 一般カテゴリの記事 ---
-    # categoryが 'custom' と 'prefecture' 以外のものを取得
     general_articles = ArticleModel.objects.exclude(
         category__in=["custom", "prefecture"]
     ).order_by("-published_at")
@@ -43,41 +41,38 @@ def index(request):
     if selected_cat and selected_cat in dict(ArticleModel.CATEGORY_CHOICES).keys():
         general_articles = general_articles.filter(category=selected_cat)
 
-    # --- マイキーワードを単語ごとに分ける処理 ---
-    # --- マイキーワードを単語ごとに分ける処理 ---
     keyword_groups = []
     user_prefecture = None
     prefecture_articles = []
 
     if request.user.is_authenticated:
         user_keywords = request.user.keywords.all()
-        # views.py のマイキーワード部分
         for i, k in enumerate(user_keywords):
-            # ターミナルで保存した時に付けたメモ(k.word)と一致するものを全部出す！
             articles = ArticleModel.objects.filter(keyword_tag=k.word).order_by(
                 "-published_at"
             )
             keyword_groups.append({"id": i, "word": k.word, "articles": articles})
 
-        # 都道府県情報を取得
         try:
             profile = UserProfile.objects.get(user=request.user)
             if profile.prefecture:
                 user_prefecture = PREFECTURE_NAMES.get(
                     profile.prefecture, profile.prefecture
                 )
-                prefecture_articles = get_prefecture_articles(request.user)[
-                    :10
-                ]  # 最大10件
+                prefecture_articles = get_prefecture_articles(request.user)[:10]
         except UserProfile.DoesNotExist:
             pass
+
+    filtered_category_choices = [
+        choice for choice in ArticleModel.CATEGORY_CHOICES if choice[0] != "prefecture"
+    ]
 
     context = {
         "general_articles": general_articles,
         "keyword_groups": keyword_groups,
         "current_year": timezone.now().year,
         "current_category": selected_cat,
-        "category_choices": ArticleModel.CATEGORY_CHOICES,
+        "category_choices": filtered_category_choices,
         "user_prefecture": user_prefecture,
         "prefecture_articles": prefecture_articles,
     }
@@ -111,7 +106,6 @@ def my_page(request):
     if request.method == "POST":
         form_type = request.POST.get("form_type")
 
-        # 都道府県フォーム または LINE通知フォーム の保存処理
         if form_type == "prefecture":
             new_prefecture = request.POST.get("prefecture")
             if new_prefecture:
@@ -123,7 +117,6 @@ def my_page(request):
             profile.save(update_fields=["is_line_subscribed"])
             return redirect("news_collector:my_page")
 
-        # キーワードフォームの保存処理
         if "word" in request.POST:
             keyword_form = UserKeywordForm(request.POST)
             if keyword_form.is_valid():
@@ -132,7 +125,6 @@ def my_page(request):
                 keyword.save()
                 return redirect("news_collector:my_page")
 
-    # 画面表示用のデータ準備
     profile_form = UserProfileForm(instance=profile)
     keyword_form = UserKeywordForm()
     keyword_list = request.user.keywords.all()
@@ -148,7 +140,7 @@ def my_page(request):
         "keyword_form": keyword_form,
         "profile_form": profile_form,
         "current_prefecture": current_prefecture_name,
-        "is_line_subscribed": profile.is_line_subscribed,  # これでDBの最新値が渡る
+        "is_line_subscribed": profile.is_line_subscribed,
         "is_line_linked": bool(profile.line_user_id),
     }
     return render(request, "news_collector/my_page.html", context)
@@ -156,7 +148,6 @@ def my_page(request):
 
 @login_required
 def delete_keyword(request, pk):
-    # 自分の登録したキーワードの中から、指定されたID(pk)のものを探す
     keyword = UserKeyword.objects.filter(user=request.user, pk=pk).first()
     if keyword:
         keyword.delete()
@@ -169,7 +160,6 @@ def custom_logout(request):
     return render(request, "registration/logout.html")
 
 
-# LINE Botの設定（.env から読み込み）
 line_bot_api = LineBotApi(os.environ.get("LINE_CHANNEL_ACCESS_TOKEN"))
 handler = WebhookHandler(os.environ.get("LINE_CHANNEL_SECRET"))
 
@@ -193,9 +183,8 @@ def handle_message(event):
     """LINEメッセージの内容を解析して連携する"""
     print(f"DEBUG: CURRENT_USER_ID_FROM_LINE = {event.source.user_id}", flush=True)
     text = event.message.text
-    line_user_id = event.source.user_id  # LINEのユーザー固有ID
+    line_user_id = event.source.user_id
 
-    # ユーザーが送ってきた文章に【ユーザー名】が含まれているかチェック
     match = re.search(r"ユーザー名(.+)でLINEと連携", text)
 
     if match:
@@ -203,9 +192,7 @@ def handle_message(event):
         User = get_user_model()
 
         try:
-            # 1. ユーザーを探す
             user = User.objects.get(username__iexact=username)
-            # 2. プロフィールにLINE IDを保存する
             profile, created = UserProfile.objects.get_or_create(user=user)
             profile.line_user_id = line_user_id
             profile.save()
@@ -219,8 +206,6 @@ def handle_message(event):
             print(f"DEBUG: 存在するユーザー一覧: {all_users}")
             reply_text = f"エラー：ユーザー「{username}」が見つかりませんでした。"
     else:
-        # 指定の文章以外が送られてきた場合
         reply_text = "連携メッセージの形式が正しくありません。"
 
-    # LINEに応答を返す
     line_bot_api.reply_message(event.reply_token, TextSendMessage(text=reply_text))

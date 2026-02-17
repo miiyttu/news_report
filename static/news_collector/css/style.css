@@ -13,7 +13,7 @@ body {
 
 @media (max-width: 768px) {
     body {
-        font-size: 0.875rem; /* 14px */
+        font-size: 0.875rem;
     }
     h1, h2, h3, h4, h6 {
         font-size: 0.9em;
@@ -134,6 +134,7 @@ footer {
 }
 
 .btn:hover {
+    background-color: #e2f0fd;
     border-color: #1173d4;
     color: #0d6efd;
 }
@@ -145,8 +146,8 @@ footer {
 }
 
 .btn-primary-custom:hover {
-    background-color: #0d6efd;
-    border-color: #0d6efd;
+    background-color: #448efc;
+    border-color: #448efc;
     color: white;
 }
 
@@ -162,9 +163,9 @@ footer {
    ======================================== */
 
 .hero-section {
-    background: linear-gradient(135deg, #eff6ff 0%, #f8fafc 100%); /* 薄いブルーのグラデーション */
+    background: linear-gradient(135deg, #eff6ff 0%, #f8fafc 100%);
     border: 1px solid #e2e8f0;
-    border-radius: 2rem; /* 角を丸く */
+    border-radius: 2rem;
     padding: 2rem 1rem;
     box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
     margin-top: 2rem;
@@ -187,23 +188,19 @@ footer {
     }
 }
 
-/* --- タイトルの設定 --- */
 .hero-title {
     font-weight: 900;
-    /* 画面幅に応じてフォントサイズを縮小させる（折り返さない工夫） */
     font-size: clamp(1.8rem, 5vw, 3.2rem); 
     line-height: 1.2;
     color: #0f172a;
     margin-bottom: 1.5rem;
-    /* 画面が狭くなっても極力1行の長さを保つ */
     white-space: nowrap; 
 }
 
 .hero-title span {
-    color: #1173d4; /* 青色部分 */
+    color: #1173d4;
 }
 
-/* コンテナで奥行きを出す */
 .hero-image-container {
     perspective: 2000px;
     display: flex;
@@ -211,29 +208,22 @@ footer {
     align-items: center;
 }
 
-/* これが「1枚目の白いカード」の本体 */
 .hero-card {
-    background-color: #ffffff !important; /* 確実に白くする */
-    padding: 20px;            /* イラストの周りの白い余白 */
-    border-radius: 20px;      /* 角丸 */
+    background-color: #ffffff !important;
+    padding: 20px;
+    border-radius: 20px;
     width: 100%;
-    max-width: 250px;         /* 1枚目のように大きく */
-    
-    /* 1枚目のデザイン通りの傾き（右が奥） */
+    max-width: 250px;
     transform: rotateY(-20deg) rotateX(10deg) rotateZ(-5deg);
-    
-    /* 影をしっかりつける */
     box-shadow: 25px 30px 50px rgba(0, 0, 0, 0.12);
 }
 
-/* 中のイラストの設定 */
 .hero-card img {
     width: 100%;
     height: auto;
     display: block;
 }
 
-/* タイトルの青色と折り返し設定（再掲） */
 .hero-title {
     font-weight: 900;
     font-size: clamp(1.8rem, 5vw, 3.2rem); 
@@ -244,7 +234,6 @@ footer {
     color: #1173d4 !important;
 }
 
-/* スマホ対応：傾きを解除 */
 @media (max-width: 768px) {
     .hero-title { white-space: nowrap; }
     .hero-card {
@@ -297,9 +286,9 @@ footer {
 }
 
 .nav-pills .btn.active:hover {
-    background-color: #0d6efd;;
+    background-color: #448efc;
     color: white;
-    border-color: #0d6efd;;
+    border-color: #448efc;
 }
 
 .last-updated {
@@ -309,31 +298,26 @@ footer {
     font-style: italic;
 }
 
-/* ツールチップバブル */
-/* 親要素：ここを基準にする */
 .keyword-tooltip-wrapper {
     position: relative;
     display: inline-block;
 }
 
-/* 吹き出し本体：絶対位置でボタンの右に配置 */
 .tooltip-content {
     position: absolute;
     top: 50%;
-    left: calc(100% + 15px); /* ボタンの右端から15px離す */
-    transform: translateY(-50%); /* 垂直方向の中央揃え */
+    left: calc(100% + 15px);
+    transform: translateY(-50%);
     background: white;
     border: 1px solid #e9ecef;
     border-radius: 0.5rem;
     padding: 1rem;
     box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     z-index: 1000;
-    min-width: 450px; /* 内容に合わせて調整 */
+    min-width: 450px;
     display: block;
 }
 
-/* 吹き出しのしっぽ（左向きの三角形） */
-/* 吹き出し本体：浮かせずにインラインブロック化 */
 .tooltip-content-inline {
     background: white;
     border: 1px solid #e9ecef;
@@ -341,17 +325,14 @@ footer {
     padding: 0.8rem 1.2rem;
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     min-width: 300px;
-    /* absoluteを削除 */
 }
 
-/* 左向きのしっぽ：これも実体として配置 */
 .bubble-tail-left {
     width: 0;
     height: 0;
     position: relative;
 }
 
-/* しっぽの内側を白くする（枠線効果） */
 .bubble-tail-left::after {
     content: "";
     position: absolute;
@@ -386,7 +367,7 @@ footer {
 
     .bubble-tail-left,
     .bubble-tail-left::after {
-        display: none; /* スマホではしっぽを非表示に */
+        display: none;
     }
 }
 
@@ -433,7 +414,6 @@ footer {
     border-radius: 0.25rem;
 }
 
-/* カテゴリバッジ色 */
 .badge.bg-business { background-color: #343a40; }
 .badge.bg-technology { background-color: #6f42c1; }
 .badge.bg-science { background-color: #198754; }
@@ -441,10 +421,8 @@ footer {
 .badge.bg-sports { background-color: #fd7e14; }
 .badge.bg-entertainment { background-color: #e83e8c; }
 
-/* マイキーワード用バッジ */
 .badge-info { background-color: #17a2b8; }
 
-/* レスポンシブ */
 @media (max-width: 768px) {
     .nav-pills {
         flex-direction: column;
@@ -462,16 +440,20 @@ footer {
 /* ========================================
    マイスページ用スタイル
    ======================================== */
+.line-talk img{
+    width: 100%;
+    text-align: center;
+}
+
+
 @media (max-width: 768px) {
     #my-page .sp{
         text-align: center;
     }
 }
 
-/* 削除ボタンのhover効果 */
 #my-page .badge.text-danger:hover {
-    background-color: #6c757d;
-    color: white;
+    background-color: #cad9e5;
     border-color: #6c757d;
 }
 
