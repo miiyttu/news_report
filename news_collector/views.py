@@ -28,7 +28,6 @@ from .services import (
 def index(request):
 
     if "reloaded" in request.GET:
-        # 1. 各処理をスレッドとして定義（まだ実行しない）
         t1 = threading.Thread(target=fetch_all_categories)
         threads = [t1]
 
@@ -40,15 +39,12 @@ def index(request):
                 threading.Thread(target=lambda: fetch_prefecture_news(request.user))
             )
 
-        # 2. 全部の処理を「同時」にスタートさせる
         for t in threads:
             t.start()
 
-        # 3. 重要：全部の処理が終わるまで「ここで待機」する
         for t in threads:
-            t.join(timeout=25)  # 最大25秒まで待つ（30秒ルールの手前）
+            t.join(timeout=25)
 
-        # 4. 全て終わった（またはタイムアウトした）状態でリダイレクト
         return redirect("/")
 
     selected_cat = request.GET.get("cat", "")
