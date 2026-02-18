@@ -1,5 +1,7 @@
 import os
 import re
+import threading
+
 from django.http import HttpResponse, HttpResponseForbidden
 from django.shortcuts import render, redirect
 from django.utils import timezone
@@ -26,10 +28,27 @@ from .services import (
 def index(request):
 
     if "reloaded" in request.GET:
-        # fetch_all_categories()
-        # if request.user.is_authenticated:
-        #    fetch_user_keywords_news(request.user)
-        #    fetch_prefecture_news(request.user)
+        # 1. 各処理をスレッドとして定義（まだ実行しない）
+        t1 = threading.Thread(target=fetch_all_categories)
+        threads = [t1]
+
+        if request.user.is_authenticated:
+            threads.append(
+                threading.Thread(target=lambda: fetch_user_keywords_news(request.user))
+            )
+            threads.append(
+                threading.Thread(target=lambda: fetch_prefecture_news(request.user))
+            )
+
+        # 2. 全部の処理を「同時」にスタートさせる
+        for t in threads:
+            t.start()
+
+        # 3. 重要：全部の処理が終わるまで「ここで待機」する
+        for t in threads:
+            t.join(timeout=25)  # 最大25秒まで待つ（30秒ルールの手前）
+
+        # 4. 全て終わった（またはタイムアウトした）状態でリダイレクト
         return redirect("/")
 
     selected_cat = request.GET.get("cat", "")

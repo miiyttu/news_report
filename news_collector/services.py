@@ -81,7 +81,7 @@ def fetch_google_news(category="technology"):
     print(f"\n=== {category.upper()} を取得中... ===")
     try:
         feed = feedparser.parse(RSS_URLS[category])
-        for entry in feed.entries[:10]:
+        for entry in feed.entries[:5]:
             if ArticleModel.objects.filter(url=entry.link).exists():
                 continue
 
@@ -127,7 +127,7 @@ def fetch_user_keywords_news(user):
             feed = feedparser.parse(search_url)
             print(f"  検索結果: {len(feed.entries)}件")
 
-            for entry in feed.entries[:15]:
+            for entry in feed.entries[:5]:
                 try:
                     ArticleModel.objects.update_or_create(
                         url=entry.link,
@@ -171,7 +171,7 @@ def get_47news_latest(area):
 
         count = 0
         for article in articles:
-            if count >= 10:
+            if count >= 8:
                 break
 
             title_el = article.select_one(".item_ttl")
