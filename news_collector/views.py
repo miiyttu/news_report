@@ -26,10 +26,10 @@ from .services import (
 def index(request):
 
     if "reloaded" in request.GET:
-        fetch_all_categories()
-        if request.user.is_authenticated:
-            fetch_user_keywords_news(request.user)
-            fetch_prefecture_news(request.user)
+        # fetch_all_categories()
+        # if request.user.is_authenticated:
+        #    fetch_user_keywords_news(request.user)
+        #    fetch_prefecture_news(request.user)
         return redirect("/")
 
     selected_cat = request.GET.get("cat", "")
